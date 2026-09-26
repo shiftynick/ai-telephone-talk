@@ -178,6 +178,7 @@
   const inOut = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
 
   async function show(tex, ms = 1600) {
+    window.SFX?.glitch(ms / 1000);
     S.b = tex; S.zStartB = performance.now() / 1000; S.prog = 0;
     await tween('prog', 1, ms, inOut);
     S.a = tex; S.zStartA = S.zStartB; S.prog = 0;
@@ -191,12 +192,14 @@
     lis.forEach((li, k) => { li.classList.toggle('done', k < n); li.classList.toggle('now', k === n); });
     capStep.textContent = `${String(n).padStart(2, '0')} · ${h.label}`;
     capModel.textContent = h.model;
+    if (n > 0) window.SFX?.blip(n);
     if (h.fid != null) fidelity(h.fid);
   }
   function fidelity(v) {
     fidBar.style.width = `${v}%`;
     fidEl.classList.toggle('low', v < 40);
     const from = parseInt(fidN.textContent, 10) || 100, t0 = performance.now();
+    if (v < from) Deck.after(250, () => window.SFX?.drop(from, v)); // the meter falling is audible
     const tick = (now) => { const k = Math.min(1, (now - t0) / 1200);
       fidN.textContent = `${Math.round(from + (v - from) * (1 - Math.pow(1 - k, 3)))}%`; if (k < 1 && running) requestAnimationFrame(tick); };
     requestAnimationFrame(tick);
@@ -205,6 +208,7 @@
     capText.textContent = '';
     for (let k = 0; k < text.length && running; k++) {
       capText.textContent = text.slice(0, k + 1);
+      if (k % 2 === 0 && text[k] !== ' ') window.SFX?.tick();
       await Deck.sleep(1000 / cps * (text[k] === ',' || text[k] === '.' ? 5 : 1));
     }
   }
@@ -216,6 +220,7 @@
     const t0 = performance.now();
     const tick = (now) => {
       const k = (now - t0) / ms;
+      if (Math.random() < 0.25) window.SFX?.chirp();
       node.innerHTML = [...target].map((ch, j) => {
         const settle = j / target.length * .7 + .3;
         return k >= settle ? ch : `<span class="glitch">${GLYPHS[(Math.random() * GLYPHS.length) | 0]}</span>`;
@@ -233,6 +238,7 @@
     const glyphs = [...new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(str)].map((g) => g.segment).filter((g) => g.trim());
     emojiEl.innerHTML = glyphs.map((g, k) => `<span style="--k:${k}">${g}</span>`).join('');
     emojiEl.classList.add('on');
+    glyphs.forEach((_, k) => Deck.after(k * 110 + 80, () => window.SFX?.pop(k))); // one pop per emoji, in step with the animation
     await Deck.sleep(900 + glyphs.length * 110 + 1600);
     emojiEl.classList.remove('on');
   }
@@ -242,6 +248,7 @@
     const src = (STORY.src[i] || '').replace(/```\w*|```/g, '').split('\n').slice(0, 90).join('\n');
     codeEl.innerHTML = `<pre>${src.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</pre>`;
     codeEl.classList.add('on');
+    window.SFX?.chatter(ms / 1000);
     const pre = codeEl.firstChild, t0 = performance.now();
     const scroll = (now) => { const k = Math.min(1, (now - t0) / ms); pre.style.transform = `translateY(${-k * Math.max(0, pre.scrollHeight - 700)}px)`; if (k < 1 && running) requestAnimationFrame(scroll); };
     requestAnimationFrame(scroll);
@@ -325,6 +332,9 @@
     tween('dim', .75, 1500);
     el.classList.add('titled');
     el.querySelectorAll('.scramble').forEach((s, k) => Deck.after(250 + k * 350, () => scramble(s)));
+    window.SFX?.boom();
+    window.SFX?.humSwell();
+    Deck.after(2500, () => window.SFX?.humOff(4)); // the drone fades out under the title
   }
 
   // waits on a standby screen; first → starts, second skips to title, third moves on
@@ -338,9 +348,15 @@
       fidBar.style.width = '100%'; fidN.textContent = '100%'; fidEl.classList.remove('low');
       cancelAnimationFrame(S.raf); S.raf = requestAnimationFrame(frame);
     },
-    leave() { running = false; cancelAnimationFrame(S.raf); video.pause(); audio.pause(); },
+    leave() { running = false; cancelAnimationFrame(S.raf); video.pause(); audio.pause(); window.SFX?.stopAll(); },
     next() {
-      if (!started) { started = true; el.classList.remove('standby'); run(); return true; }
+      if (!started) {
+        started = true; el.classList.remove('standby');
+        window.SFX?.start();
+        Deck.after(700, () => window.SFX?.humOn());
+        run();
+        return true;
+      }
       if (!titled) { toTitle(); return true; }
       return false;
     },

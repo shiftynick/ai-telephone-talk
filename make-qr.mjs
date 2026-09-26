@@ -11,7 +11,7 @@ const links = [
   { file: 'ai-clarity', url: 'https://aiclaritynetwork.com', label: 'AI Clarity' },
   { file: 'afterthat', url: 'https://afterthat.chat', label: 'AfterThat' },
   // AfterThat ad: TONIGHT's meetup chat. Swap in the real invite link from Nick, then re-run.
-  { file: 'afterthat-tonight', url: 'https://afterthat.chat', label: 'AfterThat · tonight', dark: '#183d32' },
+  { file: 'afterthat-tonight', url: 'https://afterthat.chat/join/DSAI-072626', label: 'AfterThat · tonight (Dirty South AI chat)', dark: '#183d32' },
   { file: 'repo', url: 'https://github.com/shiftynick/ai-telephone', label: 'ai-telephone' },
   // { file: 'omarchy', url: 'https://omarchy.org', label: 'Omarchy' },
   // { file: 't3code', url: 'https://t3.chat', label: 'T3 Code' },

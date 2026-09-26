@@ -1,0 +1,15 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
+const p = await b.newPage({ viewport: { width: 1280, height: 720 } });
+await p.goto('file:///home/shifty/Work/ai-telephone/slides/index.html#cold-open');
+await p.waitForTimeout(1200);
+await p.keyboard.press(' ');
+const sample = async (label, ms) => { let m = 0; const t0 = Date.now(); while (Date.now() - t0 < ms) { m = Math.max(m, await p.evaluate(() => window.SFX.level())); await p.waitForTimeout(60); } console.log(label.padEnd(34), m.toFixed(3)); };
+await sample('start sweep (0–1.5s)', 1500);
+await sample('drone + typing (1.5–5s)', 3500);
+await p.keyboard.press(' ');
+await sample('title hit (0–1.2s after skip)', 1200);
+await sample('title tail (1.2–3s)', 1800);
+await p.waitForTimeout(5000);
+await sample('7s after title (drone faded?)', 800);
+await b.close();
