@@ -639,7 +639,7 @@ function stage() {
   const big = canvasTex(512, 288, (g, w, h, t = 0) => {
     g.fillStyle = '#0c0b0a'; g.fillRect(0, 0, w, h);
     g.fillStyle = '#ff5b1f'; g.beginPath(); g.arc(70, 70, 18 + Math.sin(t * 4) * 3, 0, TAU); g.fill();
-    g.fillStyle = '#f2ece1'; g.font = MONO(34, 700); g.fillText('LIVE', 100, 82);
+    g.fillStyle = '#f2ece1'; g.font = MONO(34, 700); g.fillText('LIVE · AI TELEPHONE', 100, 82);
     g.font = SERIF(92, true); g.fillStyle = '#f2ece1'; g.fillText('Your turn.', 44, 210);
     g.fillStyle = '#5ce1e6'; g.font = MONO(20, 600); g.fillText('upload a photo → watch it drift', 48, 256);
   });
@@ -702,8 +702,8 @@ function cinema() {
   const mq = canvasTex(512, 132, (g, w, h) => {
     g.fillStyle = '#f7eedb'; g.fillRect(0, 0, w, h);
     g.fillStyle = '#1a1416'; g.font = FONT(44, 800); g.textAlign = 'center';
-    g.fillText('AFTERTHAT.CHAT', w / 2, 54);
-    g.fillStyle = '#b8404a'; g.font = FONT(36, 800); g.fillText('ODENLI · COMING SOON', w / 2, 108);
+    g.fillText('ODENLI', w / 2, 56);
+    g.fillStyle = '#b8404a'; g.font = FONT(36, 800); g.fillText('COMING SOON', w / 2, 108);
   });
   const ms = screen(3.1, 0.8, mq, 0.95);
   ms.position.set(-0.0625, 15.5 * V, (Z1 + 4) * V + V + 0.01);
@@ -731,16 +731,16 @@ function cinema() {
     g.font = SERIF(46, true); g.fillText(title, w / 2, 130);
     g.font = MONO(15, 700); g.fillText(sub, w / 2, 170);
   });
-  const p1 = screen(0.8, 1.2, poster('afterthat', 'and then they never talked again', '#ff7a59', '#6d2a8a'), 1.05);
+  const p1 = screen(0.8, 1.2, poster('In a world…', 'the foundation takes 3 weeks', '#3a1c40', '#0b0a12'), 1.05);
   p1.position.set(-9 * V, 6 * V, Z1 * V + V + 0.01);
-  const p2 = screen(0.8, 1.2, poster('Odenli', 'in a world…', '#1c2340', '#000'), 1.05);
+  const p2 = screen(0.8, 1.2, poster('Odenli', '…eleven minutes.', '#1c2340', '#000'), 1.05);
   p2.position.set(8 * V, 6 * V, Z1 * V + V + 0.01);
   group.add(p1, p2);
   // vertical blade sign
   const blade = canvasTex(80, 300, (g, w, h) => {
     g.fillStyle = '#1a1416'; g.fillRect(0, 0, w, h);
     g.fillStyle = '#ffcf6a'; g.font = FONT(52, 800); g.textAlign = 'center';
-    'ADS'.split('').forEach((c, i) => g.fillText(c, w / 2, 80 + i * 80));
+    'AD'.split('').forEach((c, i) => g.fillText(c, w / 2, 110 + i * 90));
   });
   for (const s of [1, -1]) {
     const b = screen(0.5, 1.9, blade, 1.8);
@@ -760,7 +760,7 @@ function cinema() {
 }
 
 // ---------------------------------------------------------------- 11 · Finale: radio tower + fireworks
-function tower() {
+function tower(stop) {
   const group = new THREE.Group();
   const v = new Vox();
   const H = 60;
@@ -830,7 +830,7 @@ function tower() {
         r.m.scale.setScalar(0.4 + k * 5);
         r.m.material.opacity = (1 - k) * 0.8;
       }
-      const active = ctx?.here === 'finale' || performance.now() / 1000 < showUntil;
+      const active = (stop?.id && ctx?.here === stop.id) || performance.now() / 1000 < showUntil;
       if (active && t > next) {
         burst();
         next = t + 0.5 + Math.random() * 0.7;
@@ -852,7 +852,95 @@ function tower() {
   };
 }
 
-export const LANDMARKS = { phonebooth, house, omarchy, t3code, opencode, jev, billboard, poles, stage, cinema, tower };
+// ---------------------------------------------------------------- ad: AfterThat — a giant phone, a chat that goes cold
+function phonead() {
+  const group = new THREE.Group();
+  const v = new Vox();
+  const X0 = -9, X1 = 8, Y0 = 3, Y1 = 34;
+  v.box(-10, 9, 0, 2, -3, 2, (x, y) => (y === 2 ? 0xa39a8e : 0x8f877d));  // plinth
+  v.box(X0, X1, Y0, Y1, -1, 0, 0x17161c);
+  for (const [x, y] of [[X0, Y0], [X1, Y0], [X0, Y1], [X1, Y1]]) { v.del(x, y, -1); v.del(x, y, 0); }
+  v.box(X1 + 1, X1 + 1, 24, 28, -1, -1, 0x2a2930);                          // side button
+  line(v, [-1, 1, -8], [-1, 20, -2], 0x2a2930); line(v, [0, 1, -8], [0, 20, -2], 0x2a2930); // kickstand
+  group.add(solid(v));
+  const W = 360, H = 640;
+  const bubble = (g, text, right, y, a = 1, faded = false) => {
+    g.globalAlpha = a;
+    g.font = FONT(26, 600);
+    const tw = Math.min(250, g.measureText(text).width);
+    const x = right ? W - 24 - tw - 32 : 24;
+    g.fillStyle = right ? (faded ? '#9fb3ff' : '#4f6cff') : '#ecE8f2';
+    g.beginPath(); g.roundRect(x, y, tw + 32, 50, 22); g.fill();
+    g.fillStyle = right ? '#fff' : '#1a1622';
+    g.fillText(text, x + 16, y + 34, 250);
+    g.globalAlpha = 1;
+  };
+  const tex = canvasTex(W, H, (g, w, h, t = 0) => {
+    const T = t % 15;
+    g.fillStyle = '#eeebf4'; g.fillRect(0, 0, w, h);
+    // header
+    g.fillStyle = '#f0ecf7'; g.fillRect(0, 0, w, 86);
+    g.fillStyle = '#ff7a59'; g.beginPath(); g.arc(46, 46, 22, 0, TAU); g.fill();
+    g.fillStyle = '#fff'; g.font = FONT(22, 700); g.textAlign = 'center'; g.fillText('S', 46, 54); g.textAlign = 'left';
+    g.fillStyle = '#1a1622'; g.font = FONT(26, 700); g.fillText('Sam', 82, 44);
+    g.fillStyle = T < 6 ? '#35b36b' : '#8a8494'; g.font = FONT(17, 500); g.fillText(T < 6 ? 'online' : 'last seen 3 weeks ago', 82, 68);
+    const fade = (t0) => Math.max(0, Math.min(1, (T - t0) * 3));
+    const cold = T > 6;
+    if (T > 0.8) bubble(g, 'great meeting you!!', true, 110, fade(0.8), cold);
+    if (T > 1.9) bubble(g, 'you too! coffee soon?', false, 176, fade(1.9));
+    if (T > 3.0) bubble(g, '100%! next week?', true, 242, fade(3.0), cold);
+    if (T > 4.1) bubble(g, 'yes!! 🙂', false, 308, fade(4.1));
+    if (T > 6.4) {
+      g.fillStyle = `rgba(20,16,30,${Math.min(0.55, (T - 6.4) * 0.8)})`; g.fillRect(0, 86, w, 330);
+      g.globalAlpha = Math.min(1, (T - 6.4) * 1.5);
+      g.fillStyle = '#fff'; g.font = SERIF(46, true); g.textAlign = 'center'; g.fillText('3 weeks later…', w / 2, 260); g.textAlign = 'left';
+      g.globalAlpha = 1;
+    }
+    if (T > 8) { bubble(g, 'hey! still on?', true, 440, fade(8)); g.fillStyle = '#8a8494'; g.font = FONT(16, 500); g.fillText('Delivered', w - 110, 512); }
+    if (T > 9.2 && T < 11) { // typing… then nothing
+      g.fillStyle = '#ecE8f2'; g.beginPath(); g.roundRect(24, 530, 90, 46, 22); g.fill();
+      for (let i = 0; i < 3; i++) { g.fillStyle = `rgba(90,84,104,${0.4 + 0.6 * Math.abs(Math.sin(T * 5 + i))})`; g.beginPath(); g.arc(50 + i * 20, 553, 6, 0, TAU); g.fill(); }
+    }
+    if (T > 11.6) { // the ad card
+      const a = Math.min(1, (T - 11.6) * 2);
+      g.globalAlpha = a;
+      const gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#ff7a59'); gr.addColorStop(1, '#6d2a8a');
+      g.fillStyle = gr; g.fillRect(0, 0, w, h);
+      g.fillStyle = '#fff'; g.textAlign = 'center';
+      g.font = SERIF(44, true); g.fillText('and then they', w / 2, 250); g.fillText('never talked again.', w / 2, 300);
+      g.font = FONT(40, 800); g.fillText('afterthat.chat', w / 2, 420);
+      g.textAlign = 'left'; g.globalAlpha = 1;
+    }
+  });
+  const scr = screen(2.02, 3.62, tex, 0.78);
+  scr.position.set(-0.0625, 18.5 * V + 0.06, V + 0.012);
+  group.add(scr);
+  return {
+    group, anchor: new THREE.Vector3(0, 4.9, 0),
+    update(dt, t) { if (Math.floor(t * 12) !== Math.floor((t - dt) * 12)) tex.redraw(t); },
+  };
+}
+
+// a flashing "AD BREAK" lightbox that marks the ad stops
+function adSign() {
+  const group = new THREE.Group();
+  const v = new Vox();
+  v.box(0, 0, 0, 16, 0, 0, 0x3a3440);
+  v.box(-6, 6, 17, 22, -1, 0, 0x1a1720);
+  group.add(solid(v));
+  const tex = canvasTex(256, 96, (g, w, h, on = 1) => {
+    g.fillStyle = on ? '#ffd23f' : '#3a3016'; g.fillRect(0, 0, w, h);
+    g.fillStyle = on ? '#1a1416' : '#6a5a2a'; g.font = FONT(46, 800); g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText('AD BREAK', w / 2, h / 2 + 3);
+  });
+  const face = screen(1.45, 0.55, tex, 1.6);
+  face.position.set(V * 0.5, 19.5 * V + 0.06, V + 0.012);
+  group.add(face);
+  let last = 1;
+  return { group, update(dt, t) { const on = Math.floor(t * 1.4) % 2 ? 1 : 0; if (on !== last) { tex.redraw(on); last = on; } } };
+}
+
+export const LANDMARKS = { phonebooth, house, omarchy, t3code, opencode, jev, billboard, poles, stage, cinema, tower, phonead };
 
 export function buildLandmark(stop, ctx) {
   const make = LANDMARKS[stop.kind];
@@ -861,5 +949,15 @@ export function buildLandmark(stop, ctx) {
     const group = new THREE.Group(); group.add(solid(v));
     return { group, anchor: new THREE.Vector3(0, 2.6, 0) };
   }
-  return make(stop, ctx);
+  const lm = make(stop, ctx);
+  if (stop.ad) {
+    // ad stops carry an AD BREAK lightbox beside the landmark
+    const sign = adSign();
+    sign.group.position.set(2.7, 0, 0.9);
+    sign.group.rotation.y = -0.25;
+    lm.group.add(sign.group);
+    const inner = lm.update;
+    lm.update = (dt, t, c) => { inner?.(dt, t, c); sign.update(dt, t); };
+  }
+  return lm;
 }

@@ -8,7 +8,7 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 import { createMascot } from '../mascot/mascot.js';
-import { STOPS, buildGraph, route, landmarkAt } from './map.js';
+import { STOPS, SCENERY, buildGraph, route, landmarkAt, toWorld } from './map.js';
 import { buildTerrain } from './terrain.js';
 import { buildLandmark } from './landmarks.js';
 import { buildProps } from './props.js';
@@ -163,10 +163,17 @@ const stops = STOPS.map((s) => {
   scene.add(lm.group);
   lm.group.updateMatrixWorld(true);
   const el = document.createElement('div');
-  el.className = `lbl${s.tech ? ' tech' : ''}`;
+  el.className = `lbl${s.ad ? ' ad' : ''}`;
   el.innerHTML = `<b>${s.n}</b><span>${s.title}</span>${s.sub ? `<i>${s.sub}</i>` : ''}`;
   $('#labels').appendChild(el);
   return { ...s, node, lm, el, visited: false, anchor: lm.group.localToWorld(lm.anchor.clone()) };
+});
+const scenery = SCENERY.map((sc) => {
+  const lm = buildLandmark({ kind: sc.kind }, { terrain });
+  lm.group.position.copy(toWorld(...sc.at));
+  lm.group.rotation.y = lm.face ?? Math.PI / 4;
+  scene.add(lm.group);
+  return lm;
 });
 // glowing ring on the pad you're standing on ("press enter here")
 const ringMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0xff5b1f).multiplyScalar(2.2), transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide });
@@ -175,14 +182,6 @@ padRing.rotation.x = -Math.PI / 2;
 const padRing2 = new THREE.Mesh(new THREE.RingGeometry(1.2, 1.26, 48), ringMat);
 padRing2.rotation.x = -Math.PI / 2;
 scene.add(padRing, padRing2);
-
-const signs = [...graph.nodes.values()].filter((n) => n.junction?.sign).map((n) => {
-  const el = document.createElement('div');
-  el.className = 'lbl sign';
-  el.textContent = `↑ ${n.junction.sign}`;
-  $('#labels').appendChild(el);
-  return { el, anchor: n.pos.clone().add(new THREE.Vector3(0, 1.8, 0)) };
-});
 
 // ---------------------------------------------------------------- mascot
 const pig = createMascot(THREE, { smoke: true, scale: 1.3 });
@@ -195,7 +194,7 @@ const SAVE_KEY = 'ai-telephone-world';
 let saved = null;
 try { saved = Q.has('fresh') || Q.has('at') ? null : JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch { saved = null; }
 const player = {
-  node: graph.nodes.get(Q.get('at') || (saved && graph.nodes.has(saved.at) ? saved.at : 'start')),
+  node: graph.nodes.get(Q.get('at') || (saved && graph.nodes.has(saved.at) ? saved.at : STOPS[0].id)),
   pos: new THREE.Vector3(),
   yaw: 0.6, targetYaw: 0.6,
   walk: null, // { steps: [{edge, forward}], k, s }
@@ -251,8 +250,7 @@ function arrive(node) {
   player.node = node;
   player.walk = null;
   // keep going while an arrow is held
-  if (player.held && !node.stop) { if (tryDir(player.held)) return; }
-  if (player.held && node.stop == null) { if (tryDir(player.held)) return; }
+  if (player.held && nextStop(player.held)) return;
   pig.play('idle', { fade: 0.25 });
   const st = stopOf(node);
   setCard(st);
@@ -262,53 +260,20 @@ function arrive(node) {
 }
 const stopOf = (node) => stops.find((s) => s.node === node) || null;
 
-// arrows pick the road that best matches the screen direction
-const SCREEN = {
-  right: new THREE.Vector3(1, 0, -1).normalize(), left: new THREE.Vector3(-1, 0, 1).normalize(),
-  up: new THREE.Vector3(-1, 0, -1).normalize(), down: new THREE.Vector3(1, 0, 1).normalize(),
-};
-function tryDir(dirName) {
-  const want = SCREEN[dirName];
-  const node = player.node;
-  let best = null, bestDot = 0.3;
-  for (const e of node.edges) {
-    if (e.tech && !techRoute) continue; // the barrier is down
-    const forward = e.A === node;
-    const p = e.curve.getPointAt(forward ? Math.min(1, 1.6 / e.len) : Math.max(0, 1 - 1.6 / e.len));
-    const d = p.sub(node.pos).setY(0).normalize();
-    const dot = d.dot(want);
-    if (dot > bestDot) { bestDot = dot; best = { edge: e, forward }; }
-  }
-  if (!best) return false;
-  startWalk([best]);
-  return true;
-}
-
-// talk order (optionally skipping the technical detour)
-let techRoute = saved ? saved.tech !== false : !Q.has('express');
 if (saved) for (const s of stops) s.visited = (saved.visited || []).includes(s.id);
 function save() {
-  try { localStorage.setItem(SAVE_KEY, JSON.stringify({ at: player.node.id, visited: stops.filter((s) => s.visited).map((s) => s.id), tech: techRoute })); } catch {}
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify({ at: player.node.id, visited: stops.filter((s) => s.visited).map((s) => s.id) })); } catch {}
 }
-const order = () => stops.filter((s) => techRoute || !s.tech);
+// one road, in talk order
 function goToStop(st) {
-  if (!st || player.walk) return;
-  if (st.tech && !techRoute) setRoute(true);
-  if (st.node === player.node) return;
+  if (!st || player.walk || st.node === player.node) return false;
   startWalk(route(graph, player.node.id, st.node.id));
+  return true;
 }
 function nextStop(dir = 1) {
-  const list = order();
   const here = stopOf(player.node);
-  let idx;
-  if (here && list.includes(here)) idx = list.indexOf(here) + dir;
-  else {
-    // from a junction or a skipped stop: nearest stop along the talk order
-    const all = STOPS.map((s) => s.id);
-    const pos = here ? all.indexOf(here.id) : lastVisitedIndex();
-    idx = dir > 0 ? list.findIndex((s) => all.indexOf(s.id) > pos) : list.map((s) => all.indexOf(s.id)).filter((n) => n < pos).length - 1;
-  }
-  goToStop(list[idx]);
+  const idx = here ? stops.indexOf(here) + dir : dir > 0 ? lastVisitedIndex() + 1 : lastVisitedIndex();
+  return goToStop(stops[idx]);
 }
 function lastVisitedIndex() {
   let n = -1;
@@ -344,23 +309,9 @@ function setCard(st) {
   card.querySelector('.card-n').textContent = String(st.n).padStart(2, '0');
   card.querySelector('.card-t').textContent = st.title;
   card.querySelector('.card-s').textContent = st.sub || '';
-  card.classList.toggle('tech', !!st.tech);
+  card.classList.toggle('ad', !!st.ad);
   card.classList.add('on');
 }
-function setRoute(on) {
-  techRoute = on;
-  const r = $('#route');
-  r.classList.toggle('express', !on);
-  r.querySelector('.v').textContent = on ? 'full route' : 'express route';
-  for (const s of stops) s.el.classList.toggle('dim', !on && !!s.tech);
-  props.setTechOpen?.(on);
-  if (routeReady) audio.gate(on);
-  save();
-}
-let routeReady = false;
-setRoute(techRoute);
-routeReady = true;
-
 const tmpV = new THREE.Vector3();
 function toScreen(p) {
   tmpV.copy(p).project(camera);
@@ -368,7 +319,8 @@ function toScreen(p) {
 }
 function updateLabels() {
   const here = player.walk ? null : stopOf(player.node);
-  const k = THREE.MathUtils.clamp(34 / camera.position.distanceTo(cam.focus), 0.45, 1.15);
+  const far = !playing || overviewOn;
+  const k = THREE.MathUtils.clamp(34 / camera.position.distanceTo(cam.focus), far ? 0.8 : 0.45, 1.15);
   for (const s of stops) {
     const p = toScreen(s.anchor);
     s.el.style.transform = `translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px) translate(-50%, -100%) scale(${(s === here ? k * 1.15 : k).toFixed(3)})`;
@@ -376,19 +328,14 @@ function updateLabels() {
     s.el.classList.toggle('visited', s.visited);
     s.el.style.visibility = p.z > 1 ? 'hidden' : '';
   }
-  for (const g of signs) {
-    const p = toScreen(g.anchor);
-    g.el.style.transform = `translate(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px) translate(-50%, -100%) scale(${k.toFixed(3)})`;
-    g.el.style.opacity = techRoute ? '' : '0.3';
-  }
 }
 
 // ---------------------------------------------------------------- slides overlay
 const frame = $('#slides'), stageEl = $('#stage');
 let overlay = { open: false, busy: false, stop: null, loadedSrc: '', ready: false };
-const slideIds = (st) => (techRoute && st.techSlides) || st.slides;
-const srcFor = (st) => { const ids = slideIds(st); return `../index.html?embed=1&hold=1&only=${ids.join(',')}#${ids[0]}`; };
-function preload(st) {
+const srcFor = (st) => st.url || `../index.html?embed=1&hold=1&only=${st.slides.join(',')}#${st.slides[0]}`;
+function preload(st, force = false) {
+  if (st.url && !force) return; // live pages (the projector) load only when opened — they'd play sound hidden
   const src = srcFor(st);
   if (overlay.loadedSrc === src) return;
   overlay.loadedSrc = src; overlay.ready = false;
@@ -414,12 +361,24 @@ function tween(ms, fn, e = ease) {
 }
 function iris(r, at) { stageEl.style.clipPath = `circle(${r}px at ${at.x}px ${at.y}px)`; }
 
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  clearTimeout(toast.t);
+  toast.t = setTimeout(() => t.classList.remove('on'), 4200);
+}
 async function openStop(st) {
   if (overlay.open || overlay.busy || player.walk) return;
+  if (st.url) {
+    // is the app up? (no-cors: an opaque answer is fine, a refused connection throws)
+    try { await fetch(st.url, { mode: 'no-cors', cache: 'no-store' }); }
+    catch { toast(`The projector isn't answering at ${new URL(st.url).host} — is the app running?`); return; }
+  }
   overlay.busy = true;
   overlay.stop = st;
   setCard(null);
-  preload(st);
+  preload(st, true);
   // the pig turns and walks up to the landmark while the camera zooms toward it
   const home = st.node.pos.clone();
   const dir = st.lm.group.position.clone().sub(home).setY(0).normalize();
@@ -431,7 +390,7 @@ async function openStop(st) {
   const lmFocus = st.lm.group.position.clone().add(new THREE.Vector3(0, 1.4, 0));
   const zoom = tween(900, (t) => { cam.override = { focus: from.f.clone().lerp(lmFocus, t), dist: THREE.MathUtils.lerp(from.d, 13, t) }; });
   await waitReady();
-  frame.contentWindow?.postMessage({ type: 'deck:start' }, '*');
+  if (!st.url) frame.contentWindow?.postMessage({ type: 'deck:start' }, '*');
   await new Promise((r) => setTimeout(r, 420));
   const at = toScreen(lmFocus);
   const R = Math.hypot(Math.max(at.x, innerWidth - at.x), Math.max(at.y, innerHeight - at.y)) + 20;
@@ -440,6 +399,7 @@ async function openStop(st) {
   await tween(850, (t) => iris(R * t, at));
   await zoom;
   stageEl.style.clipPath = 'none';
+  document.body.classList.add('stage-open');
   audio.duck(true);
   overlay.open = true; overlay.busy = false;
   frame.focus();
@@ -450,6 +410,7 @@ async function closeStop(reason) {
   if (!overlay.open || overlay.busy) return;
   overlay.busy = true;
   const st = overlay.stop;
+  if (st.url) reason = 'end';
   st.visited = true;
   save();
   const lmFocus = st.lm.group.position.clone().add(new THREE.Vector3(0, 1.4, 0));
@@ -459,6 +420,7 @@ async function closeStop(reason) {
   audio.close(false);
   await tween(700, (t) => iris(R * (1 - t), at));
   stageEl.classList.remove('open');
+  document.body.classList.remove('stage-open');
   frame.src = 'about:blank';
   overlay.loadedSrc = ''; overlay.ready = false;
   window.focus();
@@ -480,6 +442,7 @@ async function closeStop(reason) {
   preload(st);
 }
 
+$('#back').addEventListener('click', () => closeStop('esc'));
 addEventListener('message', (e) => {
   const d = e.data || {};
   if (d.type === 'deck:exit') closeStop(d.reason || 'esc');
@@ -495,39 +458,44 @@ if (playing) document.body.classList.add('playing');
 const ARROWS = { ArrowRight: 'right', ArrowLeft: 'left', ArrowUp: 'up', ArrowDown: 'down', d: 'right', a: 'left', w: 'up', s: 'down' };
 addEventListener('keydown', (e) => {
   const k = e.key;
+  const firstSound = !audio.started && !['Shift', 'Control', 'Alt', 'Meta'].includes(k);
   if (!['Shift', 'Control', 'Alt', 'Meta'].includes(k)) audio.start();
   if (k === 'm' || k === 'M') { setSoundChip(audio.toggleMute()); return; }
   if (k === '[' || k === ']') { audio.musicUp(k === ']' ? 0.1 : -0.1); setSoundChip(audio.muted); return; }
   if (k === 'f' || k === 'F') { toggleFullscreen(); return; }
   if (k === 'b' || k === 'B' || k === '.') { document.body.classList.toggle('blackout'); return; }
   if (overlay.open) {
-    if (k === 'Escape') closeStop('esc');
+    if (k === 'Escape' || (overlay.stop?.url && k === 'Backspace')) closeStop('esc');
     else frame.contentWindow?.postMessage({ type: 'deck:key', key: k }, '*');
     return;
   }
   if (overlay.busy) return;
-  if (!playing) { if (!['Shift', 'Control', 'Alt', 'Meta'].includes(k)) startPlaying(); return; }
-  if (overviewOn && k !== 'o' && k !== 'O' && k !== 't' && k !== 'T') { toggleOverview(); if (k === 'Escape') return; }
+  if (!playing) {
+    // the title sits behind Nick's intro: the first key brings the sound up, the next flies in
+    if (['Shift', 'Control', 'Alt', 'Meta'].includes(k) || (firstSound && !Q.has('fly'))) return;
+    startPlaying();
+    return;
+  }
+  if (overviewOn && k !== 'o' && k !== 'O') { toggleOverview(); if (k === 'Escape') return; }
   const dir = ARROWS[k] || ARROWS[k.toLowerCase?.()];
   if (dir) {
+    // → / ↓ walk on to the next stop without opening it (skip), ← / ↑ go back
     e.preventDefault();
-    player.held = dir;
-    if (!player.walk) tryDir(dir);
+    player.held = dir === 'right' || dir === 'down' ? 1 : -1;
+    if (!player.walk) nextStop(player.held);
     return;
   }
   if (k === ' ' || k === 'Enter') { e.preventDefault(); const st = stopOf(player.node); if (st && !player.walk) openStop(st); }
   else if (k === 'PageDown' || k === 'n' || k === 'N') { e.preventDefault(); smartNext(); }
   else if (k === 'PageUp' || k === 'p' || k === 'P') { e.preventDefault(); nextStop(-1); }
-  else if (k === 't' || k === 'T') setRoute(!techRoute);
   else if (k === 'o' || k === 'O') toggleOverview();
   else if (k === 'h' || k === 'H' || k === '?') document.body.classList.toggle('help');
   else if (k === 'R' && e.shiftKey) { localStorage.removeItem(SAVE_KEY); location.href = location.pathname; }
   else if (k === 'Home') { goToStop(stops[0]); }
   else if (/^[0-9]$/.test(k)) { const n = k === '0' ? 10 : +k; goToStop(stops.find((s) => s.n === n)); }
-  else if (k === '-') goToStop(stops.find((s) => s.n === 11));
   else if (k === 'x' || k === 'X') pig.play(pig.current === 'dance' ? 'idle' : 'dance');
 });
-addEventListener('keyup', (e) => { if (ARROWS[e.key] === player.held || ARROWS[e.key?.toLowerCase?.()] === player.held) player.held = null; });
+addEventListener('keyup', (e) => { if (ARROWS[e.key] || ARROWS[e.key?.toLowerCase?.()]) player.held = null; });
 
 // ---------------------------------------------------------------- intro
 const overview = {
@@ -575,7 +543,7 @@ setSoundChip(audio.muted);
 const dots = $('#dots');
 for (const s of stops) {
   const d = document.createElement('i');
-  d.className = s.tech ? 'tech' : '';
+  d.className = s.ad ? 'ad' : '';
   d.title = s.title;
   dots.appendChild(d);
   s.dot = d;
@@ -585,7 +553,6 @@ function updateDots() {
   for (const s of stops) {
     s.dot.classList.toggle('on', s.visited);
     s.dot.classList.toggle('here', s === here);
-    s.dot.classList.toggle('off', !!s.tech && !techRoute);
   }
 }
 
@@ -599,6 +566,7 @@ function frameLoop() {
   if (!window.__firstFrame) { window.__firstFrame = performance.now(); document.body.classList.add("ready"); }
   timer.update();
   const dt = Math.min(timer.getDelta(), 0.05);
+  if (overlay.open && !overlay.busy) { audio.update(dt); requestAnimationFrame(frameLoop); return; }
   t += dt;
 
   // walking
@@ -695,11 +663,11 @@ function frameLoop() {
 
   {
     const done = stops.filter((s) => s.visited).length;
-    const target = Q.has('dusk') ? 1 : Math.min(1, done / (stops.length - 1)) * 0.9 + (stopOf(player.node)?.id === 'finale' && !player.walk ? 0.1 : 0);
+    const target = Q.has('dusk') ? 1 : Math.min(1, done / (stops.length - 1)) * 0.9 + (stopOf(player.node)?.finale && !player.walk ? 0.1 : 0);
     dayNow += (target - dayNow) * (1 - Math.exp(-dt * 0.6));
     setDay(dayNow);
     audio.setDay(dayNow);
-    audio.setFinale(!player.walk && stopOf(player.node)?.id === 'finale');
+    audio.setFinale(!player.walk && !!stopOf(player.node)?.finale);
     if (props.waterfalls?.length) {
       let d = Infinity;
       for (const w of props.waterfalls) d = Math.min(d, w.distanceTo(player.pos));
@@ -710,8 +678,9 @@ function frameLoop() {
   stars.position.copy(camera.position);
   stars.material.opacity = 0.65 + Math.sin(t * 0.8) * 0.1;
   const here = !player.walk ? stopOf(player.node)?.id : null;
-  const booth = stops[0];
+  const booth = stops.find((s) => s.kind === 'phonebooth') || stops[0];
   const ringVol = playing && !booth.visited && !overlay.open ? Math.max(0, 1 - booth.lm.group.position.distanceTo(player.pos) / 16) : 0;
+  for (const sc of scenery) sc.update?.(dt, t, {});
   for (const s of stops) {
     s.lm.update?.(dt, t, { here, audio, pigPos: player.pos, ringVol });
     if (s.pop > 0) {
@@ -729,6 +698,6 @@ requestAnimationFrame(frameLoop);
 
 // debug handle for screenshots
 window.world = {
-  stops, player, graph, goToStop, openStop, closeStop, setRoute, pig, cam, startPlaying, audio,
+  stops, player, graph, goToStop, openStop, closeStop, pig, cam, startPlaying, audio,
   get state() { return { at: player.node.id, walking: !!player.walk, open: overlay.open, busy: overlay.busy, visited: stops.filter((s) => s.visited).map((s) => s.id), slide: overlay.open ? frame.contentDocument?.body?.dataset.slide : null }; },
 };

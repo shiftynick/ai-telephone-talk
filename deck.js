@@ -164,7 +164,12 @@
   };
   // let per-slide scripts (loaded after this one) register before the first enter
   let started = false;
-  const start = () => { if (!started) { started = true; set(fromHash()); } };
+  const start = () => {
+    if (started) return;
+    started = true;
+    if (!slides.length) { exit('missing'); return; } // embed asked for ids that don't exist
+    set(fromHash());
+  };
   if (EMBED) {
     // the world forwards keys it caught while the deck was open but unfocused
     addEventListener('message', (e) => {

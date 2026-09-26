@@ -16,7 +16,7 @@
 
 <div id="hud">
   <div class="left"><div class="brand"><span class="dot"></span>AI Telephone <em>world</em></div><div id="dots"></div></div>
-  <div class="chips"><div class="route" id="sound"><span class="k">M</span><span class="v">sound on</span></div><div class="route" id="route"><span class="k">T</span><span class="v">full route</span></div></div>
+  <div class="chips"><div class="route" id="sound"><span class="k">M</span><span class="v">sound on</span></div></div>
 </div>
 
 <div id="card">
@@ -29,29 +29,29 @@
 <div id="intro">
   <div class="kicker">dirty south ai · meetup</div>
   <h1>AI <em>Telephone</em></h1>
-  <p class="mono">press any key</p>
 </div>
 
 <div id="help">
   <h2>Keys</h2>
   <dl>
-    <dt>any key</dt><dd>fly in from the title</dd>
-    <dt>← → ↑ ↓ / WASD</dt><dd>walk the roads (hold to keep going)</dd>
-    <dt>Space / Enter</dt><dd>open this stop's slides</dd>
+    <dt>title screen</dt><dd>1st key: sound up · 2nd key: fly in</dd>
     <dt>PageDown / N</dt><dd>smart next: open this stop, or walk to the next one</dd>
+    <dt>→ ↓ / ← ↑</dt><dd>walk to the next / previous stop without opening it (skip)</dd>
     <dt>PageUp / P</dt><dd>walk back to the previous stop</dd>
-    <dt>1–9, 0, -</dt><dd>walk to stop 1–9, 10, 11</dd>
-    <dt>T</dt><dd>tech detour on / off (express route)</dd>
+    <dt>Space / Enter</dt><dd>open this stop</dd>
+    <dt>1–9, 0</dt><dd>walk to stop 1–9, 10</dd>
     <dt>O</dt><dd>whole-map overview</dd>
     <dt>X</dt><dd>make the pig dance</dd>
-    <dt>F · B</dt><dd>fullscreen · black screen</dd>
     <dt>M · [ ]</dt><dd>sound on/off · music quieter / louder</dd>
-    <dt>in slides: Esc</dt><dd>back to the world (→ past the last slide also returns)</dd>
+    <dt>F · B</dt><dd>fullscreen · black screen</dd>
+    <dt>in a stop: Esc</dt><dd>back to the world (→ past the last slide also returns; mouse to the top-right corner for a button)</dd>
     <dt>Shift+R</dt><dd>reset progress (it survives a reload otherwise)</dd>
   </dl>
 </div>
 
 <div id="stage"><iframe id="slides" title="slides" allow="autoplay; fullscreen"></iframe></div>
+<button id="back" title="back to the world (Esc)">✕ back to the world</button>
+<div id="toast"></div>
 <div id="fade"></div>
 
 <script type="module" src="js/main.js"></script>

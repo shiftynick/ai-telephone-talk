@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { Vox, voxGeometry, voxMaterial, rng, noise2, hash3 } from './vox.js';
 import { S } from './terrain.js';
-import { STOPS, toWorld, landmarkAt } from './map.js';
+import { STOPS, SCENERY, toWorld, landmarkAt } from './map.js';
 
 const V = 0.125;
 const TOWARD_CAM = new THREE.Vector3(1, 0, 1).normalize();
@@ -92,7 +92,7 @@ export function buildProps(scene, terrain, graph) {
   const root = new THREE.Group();
   scene.add(root);
   const stopPos = STOPS.map((s) => toWorld(...s.at));
-  const lmPos = STOPS.map(landmarkAt);
+  const lmPos = [...STOPS.map(landmarkAt), ...SCENERY.map((sc) => toWorld(...sc.at))];
   const nearLandmark = (x, z, r) => lmPos.some((p) => Math.hypot(p.x - x, p.z - z) < r);
   const updaters = [];
 

@@ -106,3 +106,78 @@
 .ab-life { background: var(--cold); }
 .ab-status { margin: 44px 0 0; font-size: 22px; color: var(--muted); min-height: 1.4em; }
 .ab-status-t { color: var(--ink); }
+
+/* ================= AD #1 · AFTERTHAT ================= */
+#ad-afterthat { padding: 0; background: #0f1110; overflow: hidden; }
+#ad-afterthat .aft-ghost, #ad-afterthat .aft-reveal { position: absolute; inset: 0; transition: opacity .5s ease, transform .7s var(--ease-out); }
+#ad-afterthat .aft-kicker { position: absolute; left: 80px; top: 64px; }
+
+/* scene A: a generic group chat (deliberately NOT afterthat's look) */
+.aft-chat {
+  position: absolute; left: 50%; top: 150px; width: 820px; height: 800px; transform: translateX(-50%);
+  background: #1b1d1f; border-radius: 40px; box-shadow: 0 40px 120px rgba(0,0,0,.6); overflow: hidden;
+  transition: filter 1.2s ease, opacity 1.2s ease;
+}
+.aft-head { display: flex; justify-content: space-between; align-items: baseline; padding: 34px 44px 26px; border-bottom: 1px solid rgba(255,255,255,.07); font-size: 30px; color: #eee; }
+.aft-head span { font-size: 22px; color: #8a8f93; }
+.aft-msgs { position: absolute; left: 0; right: 0; top: 96px; bottom: 0; padding: 26px 40px 34px; display: flex; flex-direction: column; justify-content: flex-end; gap: 18px; overflow: hidden; }
+.aft-m { display: flex; gap: 16px; align-items: flex-end; opacity: 0; transform: translateY(18px) scale(.96); animation: aftpop .45s var(--ease-out) forwards; }
+.aft-m.me { flex-direction: row-reverse; }
+.aft-av { width: 52px; height: 52px; border-radius: 50%; flex: none; display: grid; place-items: center; font: 600 20px var(--sans); color: #fff; }
+.aft-b { max-width: 560px; padding: 16px 24px; border-radius: 26px; font-size: 30px; line-height: 1.3; background: #2c3034; color: #f1f1f1; }
+.aft-m.me .aft-b { background: #3b82f6; }
+.aft-meta { display: block; font-size: 18px; color: #8a8f93; margin-bottom: 6px; }
+.aft-m.me .aft-meta { text-align: right; }
+.aft-state { font-size: 18px; color: #8a8f93; align-self: flex-end; margin: -8px 76px 0 0; opacity: 0; animation: aftfade .4s ease forwards; }
+.aft-typing { display: inline-flex; gap: 8px; padding: 20px 24px; border-radius: 26px; background: #2c3034; }
+.aft-typing i { width: 12px; height: 12px; border-radius: 50%; background: #9aa0a6; animation: aftdot 1s infinite; }
+.aft-typing i:nth-child(2) { animation-delay: .15s; } .aft-typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes aftpop { to { opacity: 1; transform: none; } }
+@keyframes aftfade { to { opacity: 1; } }
+@keyframes aftdot { 0%, 60%, 100% { transform: translateY(0); opacity: .5; } 30% { transform: translateY(-8px); opacity: 1; } }
+
+/* the passing of time */
+.aft-skip {
+  position: absolute; left: 0; right: 0; top: 46%; padding: 34px 0; text-align: center; z-index: 3;
+  font: italic 120px var(--serif); color: #f2ece1; background: linear-gradient(90deg, transparent, rgba(0,0,0,.85) 20%, rgba(0,0,0,.85) 80%, transparent);
+  opacity: 0; transform: scaleY(.2); transition: opacity .35s ease, transform .45s var(--ease-out); pointer-events: none;
+}
+.aft-skip.on { opacity: 1; transform: none; }
+#ad-afterthat.aged .aft-chat { filter: grayscale(1) brightness(.55) contrast(.9); }
+#ad-afterthat.aged .aft-head b::after { content: " · 0 active"; color: #8a8f93; font-weight: 400; }
+.aft-tumble { position: absolute; bottom: 70px; left: -200px; width: 170px; height: 170px; opacity: 0; z-index: 4; }
+#ad-afterthat.aged .aft-tumble { opacity: 1; animation: afttumble 5.5s linear forwards; }
+@keyframes afttumble {
+  0% { transform: translate(0, 0) rotate(0); } 25% { transform: translate(560px, -60px) rotate(260deg); }
+  50% { transform: translate(1120px, 0) rotate(520deg); } 75% { transform: translate(1680px, -40px) rotate(780deg); }
+  100% { transform: translate(2300px, 0) rotate(1040deg); }
+}
+.aft-caption { position: absolute; left: 0; right: 0; bottom: 28px; text-align: center; margin: 0; font: italic 44px var(--serif); color: #bdb5a8; opacity: 0; transition: opacity 1s ease 1.2s; z-index: 5; }
+#ad-afterthat.aged .aft-caption { opacity: 1; }
+
+/* scene B: afterthat itself, in its own palette */
+.aft-reveal { background: #f7f8f4; color: #183d32; opacity: 0; transform: scale(1.04); pointer-events: none; display: grid; grid-template-columns: 1fr 580px; gap: 80px; align-items: center; padding: 0 130px; font-family: var(--sans); }
+#ad-afterthat.revealed .aft-ghost { opacity: 0; transform: scale(.94); }
+#ad-afterthat.revealed .aft-reveal { opacity: 1; transform: none; pointer-events: auto; }
+.aft-reveal::before { content: ""; position: absolute; right: -180px; top: -160px; width: 760px; height: 760px; border-radius: 50%; border: 3px solid #b49a52; opacity: .5; }
+.aft-brand { display: flex; align-items: center; gap: 22px; font-size: 64px; font-weight: 600; letter-spacing: -.02em; }
+.aft-brand img { width: 96px; height: 80px; }
+.aft-h1 { margin: 44px 0 0; font-size: 84px; white-space: nowrap; line-height: 1.02; letter-spacing: -.035em; font-weight: 600; }
+.aft-sub { margin: 30px 0 0; font-size: 36px; color: #285447; }
+.aft-qr { margin-top: 56px; display: flex; align-items: center; gap: 34px; }
+.aft-qr img { width: 230px; height: 230px; border-radius: 18px; background: #fff; padding: 10px; box-shadow: 0 10px 40px rgba(24,61,50,.18); }
+.aft-qr b { display: block; font-size: 42px; }
+.aft-url { display: block; font: 30px var(--mono); color: #b49a52; margin-top: 8px; }
+.aft-qr small { display: block; font-size: 24px; color: #7c9188; margin-top: 14px; }
+.aft-phone { position: relative; height: 900px; border-radius: 64px; background: #fff; border: 14px solid #183d32; box-shadow: 0 50px 120px rgba(24,61,50,.35); overflow: hidden; display: flex; flex-direction: column; }
+.aft-phone-head { padding: 44px 40px 22px; border-bottom: 2px solid #eef2ed; }
+.aft-phone-head b { display: block; font-size: 34px; }
+.aft-phone-head span { font-size: 22px; color: #7c9188; }
+.aft-msgs-b { position: relative; top: auto; bottom: auto; flex: 1; min-height: 0; padding: 26px 30px 20px; }
+.aft-msgs-b .aft-b { background: #eef2ed; color: #183d32; font-size: 28px; }
+.aft-msgs-b .aft-m.me .aft-b { background: #d6dfd9; }
+.aft-msgs-b .aft-meta { color: #7c9188; }
+.aft-input { margin: 0 24px 30px; padding: 22px 28px; border-radius: 40px; background: #f7f8f4; color: #a7b7ae; font-size: 26px; display: flex; justify-content: space-between; }
+.aft-input i { font-style: normal; width: 52px; height: 52px; margin: -10px -14px -10px 0; border-radius: 50%; background: #183d32; color: #f7f8f4; display: grid; place-items: center; }
+.aft-msgs-b .aft-typing { background: #eef2ed; }
+.aft-msgs-b .aft-typing i { background: #7c9188; }

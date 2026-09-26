@@ -6,54 +6,53 @@ import * as THREE from 'three';
 const R2 = Math.SQRT1_2;
 export const toWorld = (u, v, y = 0) => new THREE.Vector3((u + v) * R2, y, (v - u) * R2);
 
-// kind picks the landmark model (landmarks.js). tech = on the optional side route.
+// The talk, in order. kind picks the landmark (landmarks.js); slides are deck ids
+// opened as ../index.html?embed=1&only=…; url opens a live page instead (the projector).
+// isle groups stops onto floating islands — a road between two islands becomes a bridge.
 export const STOPS = [
-  { id: 'start', n: 1, title: 'Start', sub: 'cold open', slides: ['cold-open'], at: [-24, 1], kind: 'phonebooth', isle: 'A' },
-  { id: 'about', n: 2, title: 'Who am I', slides: ['about'], at: [-16.5, -2.5], kind: 'house', isle: 'A' },
-  { id: 'omarchy', n: 3, title: 'Omarchy', slides: ['omarchy'], at: [-9, 1.5], kind: 'omarchy', isle: 'A' },
-  { id: 't3code', n: 4, title: 'T3 Code', slides: ['t3code'], at: [-3.5, -11], kind: 't3code', isle: 'T', tech: true },
-  { id: 'opencode', n: 5, title: 'OpenCode', sub: '+ $0 builds', slides: ['opencode'], at: [4.5, -12.5], kind: 'opencode', isle: 'T', tech: true },
-  { id: 'jev', n: 6, title: 'Jev', slides: ['jev'], techSlides: ['jev', 'jev-axi'], at: [12, 2], kind: 'jev', isle: 'A', lmAt: [0, -3.3] },
-  { id: 'aiclarity', n: 7, title: 'AI Clarity', sub: 'ad break', slides: ['ad-aiclarity'], at: [18.5, -3], kind: 'billboard', isle: 'A' },
-  { id: 'game', n: 8, title: 'The game', slides: ['game-rules'], at: [26, 1.5], kind: 'poles', isle: 'B' },
-  { id: 'live', n: 9, title: 'Live demo', slides: ['live'], at: [32.5, -3], kind: 'stage', isle: 'B' },
-  { id: 'ads', n: 10, title: 'Ad break', sub: 'AfterThat · Odenli', slides: ['ad-afterthat', 'ad-odenli'], at: [39.5, 1.5], kind: 'cinema', isle: 'C' },
-  { id: 'finale', n: 11, title: 'Reveal', sub: '+ links', slides: ['reveal', 'links'], at: [47, -2.5], kind: 'tower', isle: 'C' },
+  { id: 'teaser', n: 1, title: 'Teaser', sub: 'cold open', slides: ['cold-open'], at: [-24, 1], kind: 'phonebooth', isle: 'A' },
+  { id: 'afterthat', n: 2, title: 'AfterThat', sub: 'ad break', ad: true, slides: ['ad-afterthat'], at: [-17, -2.5], kind: 'phonead', isle: 'A' },
+  { id: 'opencode', n: 3, title: 'OpenCode', sub: '+ free models', slides: ['opencode'], at: [-10, 1.5], kind: 'opencode', isle: 'A' },
+  { id: 't3code', n: 4, title: 'T3 Code', slides: ['t3code'], at: [-2.5, -2], kind: 't3code', isle: 'B' },
+  { id: 'jev', n: 5, title: 'Jev', sub: '+ jev-axi', slides: ['jev', 'jev-axi'], at: [4.5, 1.5], kind: 'jev', isle: 'B', lmAt: [0, -3.3] },
+  { id: 'omarchy', n: 6, title: 'Omarchy', slides: ['omarchy'], at: [11.5, -2.5], kind: 'omarchy', isle: 'B' },
+  { id: 'aiclarity', n: 7, title: 'AI Clarity', sub: 'ad break', ad: true, slides: ['ad-aiclarity'], at: [19, 1], kind: 'billboard', isle: 'C' },
+  { id: 'game', n: 8, title: 'The game', sub: 'AI Telephone · live', url: 'http://localhost:8787/present?embed=1', at: [26, -2], kind: 'stage', isle: 'C' },
+  { id: 'odenli', n: 9, title: 'Odenli', sub: 'ad break', ad: true, slides: ['ad-odenli'], at: [33.5, 1.5], kind: 'cinema', isle: 'D' },
+  { id: 'closing', n: 10, title: 'Closing', slides: ['closing'], at: [41, -2.5], kind: 'tower', isle: 'D', finale: true },
 ];
 
-// junctions: the fork where the technical detour leaves and rejoins the main road
-export const JUNCTIONS = [
-  { id: 'j1', at: [-4, 0], sign: 'tech detour', isle: 'A' },
-  { id: 'j2', at: [7.5, -1.5], isle: 'A' },
+// landmarks that are just scenery (no stop, no label)
+export const SCENERY = [
+  { kind: 'house', at: [-21, -8.5] },
+  { kind: 'poles', at: [21.5, -6.8] },
 ];
 
-// edges; via = extra control points (screen coords). A road between two islands becomes a bridge.
+export const JUNCTIONS = [];
+
+// one road through every stop; via = extra control points (screen coords)
 export const EDGES = [
-  { a: 'start', b: 'about', via: [[-20.5, 0.5]] },
-  { a: 'about', b: 'omarchy', via: [[-13, -1.5]] },
-  { a: 'omarchy', b: 'j1', via: [] },
-  { a: 'j1', b: 't3code', via: [[-4.5, -4]], tech: true },
-  { a: 't3code', b: 'opencode', via: [[0.5, -12.5]], tech: true },
-  { a: 'opencode', b: 'j2', via: [[7, -6.5]], tech: true },
-  { a: 'j1', b: 'j2', via: [[0, 2], [4, 1.5]] },
-  { a: 'j2', b: 'jev', via: [[10, 0]] },
-  { a: 'jev', b: 'aiclarity', via: [[15.5, 0]] },
-  { a: 'aiclarity', b: 'game', via: [[22, -1]] },
-  { a: 'game', b: 'live', via: [[29.5, 0]] },
-  { a: 'live', b: 'ads', via: [[36, -1]] },
-  { a: 'ads', b: 'finale', via: [[43, 0.5]] },
+  { a: 'teaser', b: 'afterthat', via: [[-20.5, 0.2]] },
+  { a: 'afterthat', b: 'opencode', via: [[-13.5, -1.2]] },
+  { a: 'opencode', b: 't3code', via: [[-6.2, 0.2]] },
+  { a: 't3code', b: 'jev', via: [[1, -0.8]] },
+  { a: 'jev', b: 'omarchy', via: [[8, -0.5]] },
+  { a: 'omarchy', b: 'aiclarity', via: [[15.2, -1]] },
+  { a: 'aiclarity', b: 'game', via: [[22.5, -0.3]] },
+  { a: 'game', b: 'odenli', via: [[29.8, 0]] },
+  { a: 'odenli', b: 'closing', via: [[37.2, -0.3]] },
 ];
 
-// extra land for scenery (screen coords, radius)
+// extra land for scenery (screen coords, radius); the island is the nearest stop's
 export const LAND = [
-  { at: [-27, -4], r: 5 }, { at: [-20, 4], r: 4.5 }, { at: [-12, -6], r: 5.5 }, { at: [-14, 5], r: 4 },
-  { at: [-6, 5], r: 4.5 }, { at: [2, 5], r: 4.5 }, { at: [0, -13.5], r: 4 }, { at: [8.5, -11], r: 3.2 },
-  { at: [14, -5], r: 4.5 }, { at: [10, 6], r: 4 }, { at: [21, 3], r: 3.5 },
-  { at: [29, 5], r: 4 }, { at: [27, -4], r: 3.5 }, { at: [42, -4], r: 4 }, { at: [50, 2], r: 5 }, { at: [45, 4.5], r: 4 },
+  { at: [-27, -4], r: 5 }, { at: [-21, -8.5], r: 4.6 }, { at: [-20, 4.5], r: 4 }, { at: [-13, -6], r: 4.5 }, { at: [-12.5, 5], r: 3.5 },
+  { at: [-1, 5], r: 4 }, { at: [3, -6], r: 4.5 }, { at: [9, 5], r: 4 }, { at: [13, -7], r: 4 },
+  { at: [18, -5], r: 4 }, { at: [21.5, -6.8], r: 4.3 }, { at: [24, 4.5], r: 4 },
+  { at: [31, -4.5], r: 4 }, { at: [37, 5], r: 4 }, { at: [44.5, 1], r: 5 }, { at: [40, -7], r: 4 },
 ];
 
 // where a stop's landmark stands: behind the pad, away from the camera
-export const landmarkAt = (s) => { const [du, dv] = s.lmAt || [0, -2.7]; return toWorld(s.at[0] + du, s.at[1] + dv); };
+export const landmarkAt = (s) => { const [du, dv] = s.kind && !s.id ? [0, 0] : s.lmAt || [0, -2.7]; return toWorld(s.at[0] + du, s.at[1] + dv); };
 
 export function buildGraph() {
   const nodes = new Map();

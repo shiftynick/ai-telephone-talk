@@ -42,7 +42,7 @@ await page.addInitScript(() => {
   };
 });
 
-await page.goto('http://localhost:8931/world/?fresh');
+await page.goto('http://localhost:8931/world/?fresh&fly');
 await page.waitForTimeout(3000); // real time: textures, fonts
 const cdp = await page.context().newCDPSession(page);
 
@@ -70,8 +70,8 @@ await hold(4.5);                       // title over the whole map
 await page.keyboard.press('Space');    // fly in
 await hold(4.2);
 await page.evaluate(() => { window.world.stops[0].visited = true; });
-for (const k of ['2', '3', '4', '5', '6', '7', '8', '9', '0']) await walkTo(k);
-await walkTo('-', 1.2);                // finale
+for (const k of ['2', '3', '4', '5', '6', '7', '8', '9']) await walkTo(k);
+await walkTo('0', 1.2);                // closing
 await page.keyboard.press('x');        // dance under the fireworks
 await hold(5);
 await page.keyboard.press('x');
