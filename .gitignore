@@ -4,3 +4,4 @@
 world/shots/
 node_modules/
 *.log
+export/
