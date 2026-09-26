@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Telephone — the world</title>
+<link rel="stylesheet" href="world.css" />
+<script type="importmap">
+{ "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/" } }
+</script>
+</head>
+<body>
+<canvas id="gl"></canvas>
+
+<div id="labels"></div>
+
+<div id="hud">
+  <div class="left"><div class="brand"><span class="dot"></span>AI Telephone <em>world</em></div><div id="dots"></div></div>
+  <div class="route" id="route"><span class="k">T</span><span class="v">full route</span></div>
+</div>
+
+<div id="card">
+  <div class="card-n mono"></div>
+  <div class="card-t"></div>
+  <div class="card-s mono"></div>
+  <div class="card-k mono"><span class="k">␣</span> enter</div>
+</div>
+
+<div id="intro">
+  <div class="kicker">dirty south ai · meetup</div>
+  <h1>AI <em>Telephone</em></h1>
+  <p class="mono">press any key</p>
+</div>
+
+<div id="help">
+  <h2>Keys</h2>
+  <dl>
+    <dt>any key</dt><dd>fly in from the title</dd>
+    <dt>← → ↑ ↓ / WASD</dt><dd>walk the roads (hold to keep going)</dd>
+    <dt>Space / Enter</dt><dd>open this stop's slides</dd>
+    <dt>PageDown / N</dt><dd>smart next: open this stop, or walk to the next one</dd>
+    <dt>PageUp / P</dt><dd>walk back to the previous stop</dd>
+    <dt>1–9, 0, -</dt><dd>walk to stop 1–9, 10, 11</dd>
+    <dt>T</dt><dd>tech detour on / off (express route)</dd>
+    <dt>O</dt><dd>whole-map overview</dd>
+    <dt>X</dt><dd>make the pig dance</dd>
+    <dt>F · B</dt><dd>fullscreen · black screen</dd>
+    <dt>in slides: Esc</dt><dd>back to the world (→ past the last slide also returns)</dd>
+    <dt>Shift+R</dt><dd>reset progress (it survives a reload otherwise)</dd>
+  </dl>
+</div>
+
+<div id="stage"><iframe id="slides" title="slides" allow="autoplay; fullscreen"></iframe></div>
+<div id="fade"></div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

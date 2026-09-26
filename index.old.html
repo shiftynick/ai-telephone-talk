@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Telephone — meetup talk</title>
+
+<!--
+  HOW TO USE THIS DECK
+  --------------------
+  * Add/edit slides as <section class="slide" data-title="…" data-tone="…"> … </section>
+    inside <div class="canvas">. Slide order = document order.
+  * data-tone: green | violet | pink | blue  (background wash)
+  * Media:
+      - full-bleed image/gif:  <section class="slide media" data-bg-image="url('assets/x.gif')">
+      - framed meme:           use <img class="meme" src="assets/x.gif">
+      - local video:           <video src="assets/x.mp4" controls></video>
+      - Hyperframes:           uncomment the <script> tag in <head> below, then
+                               <hyperframes-player src="assets/x/composition.html" controls autoplay muted></hyperframes-player>
+  * Keyboard: arrows/space/page keys, Home/End, F fullscreen, O overview, R replay slide.
+  * QR links: edit slides/make-qr.mjs, run `node slides/make-qr.mjs`, drop new <img> on the links slide.
+  * Everything under /slides is gitignored on purpose.
+-->
+
+<link rel="stylesheet" href="deck.css" />
+
+<!-- Hyperframes player (CDN). Needed only when a slide uses <hyperframes-player>.
+     Uncomment when you have a composition to show. -->
+<!-- <script type="module" src="https://cdn.jsdelivr.net/npm/@hyperframes/player"></script> -->
+</head>
+<body>
+<div class="stage"><div class="canvas">
+
+<!-- ============ 1 · TITLE ============================================ -->
+<section class="slide" data-title="AI Telephone">
+  <p class="kicker k-green">AI MEETUP · SATURDAY NIGHT · LIVE DEMO</p>
+  <h1>AI Telephone</h1>
+  <h2 style="margin-top:18px; font-size:64px; background:linear-gradient(90deg,#46e0c0,#7c5cff,#ff5c8a); -webkit-background-clip:text; background-clip:text; color:transparent;">
+    one photo in · one video out
+  </h2>
+  <p class="lead" style="max-width:900px;">
+    The live prompt-to-GIF game where a <strong>photo</strong> becomes a <strong>description</strong>,
+    the description becomes a <strong>new image</strong>, that image is described again…
+    and meaning slowly drifts away.
+  </p>
+  <p style="margin-top:34px;"><small>[ YOUR NAME ] &nbsp;·&nbsp; [ YOUR HANDLE / SITE ] &nbsp;·&nbsp; “who I am in one line”</small></p>
+</section>
+
+<!-- ============ 2 · ABOUT ME (super short) =========================== -->
+<section class="slide" data-title="Who am I">
+  <p class="kicker k-violet">ABOUT ME — 15 SECONDS, MAX</p>
+  <h2 style="font-size:58px;">I build small, weird AI things.</h2>
+  <div class="grid-2">
+    <div class="card">
+      <div class="name">[ DAY JOB / TRIBE ]</div>
+      <div class="body">one line about what you do when you’re not making playgrounds.</div>
+    </div>
+    <div class="card">
+      <div class="name">[ WHY TELEPHONE ]</div>
+      <div class="body">one line: watching meaning drift is a great way to *see* what models actually keep and lose.</div>
+    </div>
+  </div>
+  <!-- optional meme slot: <img class="meme" src="assets/memes/me.gif"> -->
+</section>
+
+<!-- ============ 3 · AGENDA =========================================== -->
+<section class="slide" data-title="Tonight">
+  <p class="kicker k-green">TONIGHT’S MENU</p>
+  <h2 style="font-size:60px;">Five quick things… and two ad breaks.</h2>
+  <ul class="plain gap-top" style="font-size:30px;">
+    <li><strong>My little toolbox</strong> — Omarchy · T3 Code · Jev</li>
+    <li><strong>The AI Telephone game</strong> — what it does, then a live run</li>
+  </ul>
+  <div class="chips">
+    <span class="chip chip-ad" style="border-color:rgba(255,92,138,.6); color:#ff9db7;">ad #1 → aiclaritynetwork.com</span>
+    <span class="chip chip-ad" style="border-color:rgba(124,92,255,.6); color:#b3a3ff;">ad #2 → afterthat.chat</span>
+  </div>
+  <p style="margin-top:30px;"><small>Two of the slides are adult beverages. You can’t tell which.</small></p>
+</section>
+
+<!-- ============ 4 · TOOLS: OMARCHY =================================== -->
+<section class="slide" data-tone="violet" data-title="Omarchy">
+  <p class="kicker k-violet">TOOL #1</p>
+  <h2 style="font-size:60px;">Omarchy</h2>
+  <p style="font-size:26px;">[ one-liner: what Omarchy is — an opinionated Arch + Hyprland desktop distro, presumably ]</p>
+  <div class="grid-3">
+    <div class="card"><div class="name">[ fact ]</div><div class="body">why I use it / who makes it</div></div>
+    <div class="card"><div class="name">[ fact ]</div><div class="body">what’s fun about it</div></div>
+    <div class="card"><div class="name">[ fact ]</div><div class="body">where it lives (site / repo)</div></div>
+  </div>
+  <!-- <pre class="code"># your favourite omarchy-terminal line / a funny keybind</pre> -->
+</section>
+
+<!-- ============ 5 · TOOLS: T3 CODE =================================== -->
+<section class="slide" data-tone="green" data-title="T3 Code">
+  <p class="kicker k-green">TOOL #2</p>
+  <h2 style="font-size:60px;">T3 Code</h2>
+  <p style="font-size:26px;">[ one-liner: an AI coding CLI/agent — the thing I’m talking *through* right now ]</p>
+  <div class="code">$ t3 &#9656; “make the video step accept first + last keyframes”
+   &#9656; edited 7 files · typecheck clean · 138 tests pass
+   &#9656; “now stop the server you started earlier”</div>
+  <p style="margin-top:26px;"><small>[ a tip or a funny failure story — agents are great, but *always* the demo-owner ]</small></p>
+</section>
+
+<!-- ============ 6 · TOOLS: JEV ======================================= -->
+<section class="slide" data-tone="pink" data-title="Jev">
+  <p class="kicker k-pink">TOOL #3</p>
+  <h2 style="font-size:60px;">Jev</h2>
+  <p style="font-size:26px;">[ one-liner: what Jev is — I don’t know yet, you tell me and we’ll fill this in ]</p>
+  <div class="grid-3">
+    <div class="card"><div class="name">[ fact ]</div><div class="body">what it does</div></div>
+    <div class="card"><div class="name">[ fact ]</div><div class="body">why I like it</div></div>
+    <div class="card"><div class="name">[ fact ]</div><div class="body">fun anecdote</div></div>
+  </div>
+</section>
+
+<!-- ============ 7 · OPENCODE =========================================== -->
+<section class="slide" data-title="OpenCode">
+  <p class="kicker k-violet">TOOL #4</p>
+  <h2 style="font-size:60px;">OpenCode</h2>
+  <p style="font-size:26px;">the open-source AI coding agent that runs in your terminal — the thing I’m using <strong>right now</strong> to build this very talk.</p>
+  <div class="grid-3">
+    <div class="card"><div class="name" style="font-size:20px;">OPEN-SOURCE + HUGE</div><div class="body">208k★ on GitHub, ~16M devs/month, 950 contributors. Terminal-first, your editor stays yours.</div></div>
+    <div class="card"><div class="name" style="font-size:20px;">BRING YOUR OWN MODEL</div><div class="body">Sign in with GitHub Copilot or ChatGPT Plus… or plug in any provider — including local and free models.</div></div>
+    <div class="card"><div class="name" style="font-size:20px;">PRIVACY-FIRST</div><div class="body">Deliberately stores no code or context — built to run in privacy-sensitive environments.</div></div>
+  </div>
+  <p class="dim gap-top" style="text-align:center; font-size:24px;"><a href="https://opencode.ai">opencode.ai</a></p>
+</section>
+
+<!-- ============ 8 · FREE MODELS ======================================== -->
+<section class="slide" data-green="" data-title="Free models">
+  <p class="kicker k-green">TOOLS · THE UNLOCK</p>
+  <h2 style="font-size:60px;">Free models = a $0 build</h2>
+  <p style="font-size:26px;">You don’t need a budget to ship a demo. Two no-cash paths:</p>
+  <div class="grid-2">
+    <div class="card"><div class="name">OpenRouter :free</div><div class="body">Append <span class="mono">{model}:free</span> or use the <span class="mono">openrouter/free</span> router — free inference on DeepSeek-R1, Llama, Qwen and friends. Rate-limited, slower, but $0.</div></div>
+    <div class="card"><div class="name">Run it local</div><div class="body">Pull a small model with Ollama and it never leaves the machine. Private, offline, and free forever. (Slower, but so are we.)</div></div>
+  </div>
+  <p class="gap-top" style="font-size:24px;">AI Telephone runs on either — the same config, just a different model id in <span class="mono">.env</span>.</p>
+</section>
+
+<!-- ============ 7 · AD #1 — AI CLARITY ================================ -->
+<section class="slide" data-tone="pink" data-title="ad: ai-claritynetwork.com">
+  <p class="kicker k-pink">◄ AD BREAK #1 — SPONSORED BY ME ►</p>
+  <h2 style="font-size:88px;">AI Clarity<span class="dim">.</span>Network</h2>
+  <p class="lead">[ comedy hook — “do you ever look at an AI dashboard and have no idea what it’s saying?” ]</p>
+  <p style="font-size:26px;">→ <a href="https://aiclaritynetwork.com">aiclaritynetwork.com</a> <span class="dim">·</span> [ what it actually does, done as a one-line joke ]</p>
+  <!-- meme slot: <img class="meme" src="assets/memes/clarity.gif"> -->
+</section>
+
+<!-- ============ 8 · AD #2 — AFTERTHAT ================================= -->
+<section class="slide" data-tone="violet" data-title="ad: afterthat.chat">
+  <p class="kicker k-violet">◄ AD BREAK #2 — STILL SPONSORED BY ME ►</p>
+  <h2 style="font-size:88px;">AfterThat<span class="dim">.</span>chat</h2>
+  <p class="lead">[ comedy hook — “ever send the *perfect* message five seconds too late?” ]</p>
+  <p style="font-size:26px;">→ <a href="https://afterthat.chat">afterthat.chat</a> <span class="dim">·</span> [ one-line hook, on-brand joke ]</p>
+  <!-- meme slot: <img class="meme" src="assets/memes/after.gif"> -->
+</section>
+
+<!-- ============ 9 · THE GAME — WHAT ==================================== -->
+<section class="slide" data-title="The game">
+  <p class="kicker k-green">ACT TWO · THE GAME</p>
+  <h2 style="font-size:64px;">Rules of telephone,<br/>except everyone is an LLM.</h2>
+  <ul class="plain gap-top" style="font-size:29px;">
+    <li>A real <strong>photo</strong> from your phone or a starting <strong>sentence</strong></li>
+    <li>Step 1: an AI <strong>describes</strong> it · Step 2: another AI <strong>draws</strong> it back</li>
+    <li>Repeat… each step sees <strong>only its predecessor</strong> — pure telephone</li>
+    <li>Finish with a <strong>video</strong> animation (or not)</li>
+  </ul>
+  <p class="gap-top" style="font-size:24px;">The audience watches meaning <strong>drift</strong> — or survive, which is honestly scarier.</p>
+</section>
+
+<!-- ============ 10 · HOW IT RUNS ====================================== -->
+<section class="slide" data-title="How it runs">
+  <p class="kicker k-violet">HOW IT RUNS</p>
+  <div class="grid-2">
+    <div class="card">
+      <div class="name">Local-first</div>
+      <div class="body">Fastify + SQLite + Vite on your laptop. The phone joins over <strong>your Wi-Fi</strong> via a QR code; nothing is tunneled to the internet.</div>
+    </div>
+    <div class="card">
+      <div class="name">But not offline</div>
+      <div class="body">Every step goes to <strong>OpenRouter</strong> (text + vision + images) or <strong>fal.ai</strong> (video). Keys stay in a gitignored <span class="mono">.env</span>.</div>
+    </div>
+    <div class="card">
+      <div class="name">The invariant</div>
+      <div class="body">Each step gets its <strong>immediate predecessor + one instruction</strong>. No history, no original photo. Provable from the actual provider payloads.</div>
+    </div>
+    <div class="card">
+      <div class="name">Hall of drift</div>
+      <div class="body">Presets, adventure mode, autoplay, keyframe video… and it records <strong>every run</strong> so tonight’s drift lives on.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11 · HYPERFRAMES hero slot (optional) ================= -->
+<section class="slide" data-title="Hyperframes">
+  <p class="kicker k-green">VIDEO BREAK</p>
+  <h2 style="font-size:56px;">[ anything you want to play ]</h2>
+  <p class="dim">a Heygen Hyperframes composition or a local mp4. Put it in assets/ and swap this block:</p>
+  <video class="frames" src="assets/videos/My name is Jeff.mp4" controls muted playsinline></video>
+  <!-- hyperframes:       <hyperframes-player class="frames" src="assets/comp-x/index.html" controls autoplay muted></hyperframes-player> -->
+</section>
+
+<!-- ============ 12 · LINKS / QR ======================================= -->
+<section class="slide" data-title="Links">
+  <p class="kicker k-green">COME FIND ME</p>
+  <h2 style="font-size:60px;">QR or it didn’t happen.</h2>
+  <div class="qr-grid">
+    <div class="qr-item">
+      <img src="assets/qr/repo.png" alt="ai-telephone repo">
+      <div class="label">AI Telephone</div>
+      <div class="url">github.com/shiftynick/ai-telephone</div>
+    </div>
+    <div class="qr-item">
+      <img src="assets/qr/ai-clarity.png" alt="AI Clarity Network">
+      <div class="label">AI Clarity Network</div>
+      <div class="url">aiclaritynetwork.com</div>
+    </div>
+    <div class="qr-item">
+      <img src="assets/qr/afterthat.png" alt="AfterThat">
+      <div class="label">AfterThat</div>
+      <div class="url">afterthat.chat</div>
+    </div>
+    <!-- add more: generate with node slides/make-qr.mjs -->
+  </div>
+  <p style="margin-top:30px;"><small>full deck css/js also ships with the repo (minus these slides — that’s the deal). thanks!</small></p>
+</section>
+
+</div></div>
+
+<div class="overview" id="overview"></div>
+
+<div class="hud">
+  <span class="title"></span>
+  <span class="bar"><i></i></span>
+  <span class="count"></span>
+  <span class="hint">← → space · f · o · r</span>
+</div>
+
+<script src="deck.js"></script>
+</body>
+</html>

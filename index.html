@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Telephone — Nick "shifty"</title>
+<link rel="stylesheet" href="deck.css" />
+<link rel="stylesheet" href="slides.css" />
+</head>
+<body>
+<div class="stage"><div class="canvas">
+
+<!-- ================= 1 · COLD OPEN → TITLE ================= -->
+<section class="slide" id="cold-open" data-title="Cold open → title">
+  <canvas class="gl"></canvas>
+  <video class="src-video" src="assets/run4/16-anim.mp4" muted playsinline loop preload="auto"></video>
+  <audio class="co-audio" preload="none"></audio>
+  <canvas class="co-ring"></canvas>
+  <div class="co-emoji"></div>
+  <div class="co-code"></div>
+
+  <div class="co-hud">
+    <div class="co-top">
+      <div class="kicker co-live">incoming signal</div>
+      <div class="co-fid mono"><span>resemblance to original</span><b class="co-fid-n">100%</b><i><u></u></i></div>
+    </div>
+    <ol class="co-chain mono"></ol>
+    <div class="co-caption">
+      <div class="co-who mono"><span class="co-step"></span><span class="co-model"></span></div>
+      <p class="co-text mono"></p>
+    </div>
+  </div>
+
+  <div class="co-standby"><span>● standby</span></div>
+
+  <div class="co-title">
+    <div class="kicker">ai meetup · live demo</div>
+    <h1 class="display"><span class="scramble">AI</span> <em class="scramble">Telephone</em></h1>
+    <p class="co-sub">a game of telephone where every player is a model</p>
+    <p class="co-by mono">Nick <span class="hot">“shifty”</span> Underwood</p>
+  </div>
+  <aside class="notes">Starts on standby: press space to roll (~35s). Space again skips to the title.
+    A photo from a past Dirty South AI meetup (+ the logo) → 3 × (describe → draw) → emoji only → decoded → SVG → ASCII → three.js → coded animation.
+    Every hop sees only the previous one.</aside>
+</section>
+
+<!-- ================= 2 · WHO AM I ================= -->
+<section class="slide" id="about" data-title="Who am I">
+  <div class="ab-left">
+    <div class="kicker in">whoami</div>
+    <h1 class="display ab-name in" style="--d:.1s">Nick</h1>
+    <p class="ab-aka in" style="--d:.25s">a.k.a. <em>shifty</em></p>
+    <p class="ab-role in" style="--d:.4s">software engineer</p>
+  </div>
+  <div class="ab-right in" style="--d:.5s">
+    <p class="mono ab-label">token–life balance</p>
+    <div class="ab-meter"><span class="mono">TOKENS</span><div class="ab-bar"><i class="ab-tok"></i></div><b class="mono ab-tok-n">0%</b></div>
+    <div class="ab-meter"><span class="mono">LIFE</span><div class="ab-bar"><i class="ab-life"></i></div><b class="mono ab-life-n">0%</b></div>
+    <p class="mono ab-status">status: <span class="ab-status-t"></span></p>
+  </div>
+  <aside class="notes">15 seconds, max. "Software engineer, struggling with token-life balance."</aside>
+</section>
+
+<!-- ================= TOOLBOX ================= -->
+<section class="slide todo" id="omarchy" data-title="Omarchy">
+  <div class="kicker">toolbox · 01</div><h1 class="display">Omarchy</h1>
+  <p class="plan">"get in loser" → fake Hyprland desktop with windows tiling in</p><span class="time">0:45</span>
+</section>
+<section class="slide todo" id="t3code" data-title="T3 Code">
+  <div class="kicker">toolbox · 02</div><h1 class="display">T3 Code</h1>
+  <p class="plan">live-typing agent session</p><span class="time">0:45</span>
+</section>
+<section class="slide todo" id="opencode" data-title="OpenCode + $0 builds">
+  <div class="kicker">toolbox · 03</div><h1 class="display">OpenCode</h1>
+  <p class="plan">meme → open source, BYO model → free models = a $0 build</p><span class="time">1:00</span>
+</section>
+<section class="slide todo" id="jev" data-title="Jev">
+  <div class="kicker">toolbox · 04</div><h1 class="display">Jev <em>(not Jeff)</em></h1>
+  <p class="plan">"My name is Jeff" → a model that never writes text: typed questions → calibrated probabilities, ~400ms</p><span class="time">1:00</span>
+</section>
+<section class="slide todo" id="jev-axi" data-title="jev-axi">
+  <div class="kicker">i made a thing</div><h1 class="display">jev-axi</h1>
+  <p class="plan">animated terminal: agent tries curl | bash → hazard meters spike → DENIED. repo QR</p><span class="time">1:00</span>
+</section>
+
+<!-- ================= AD 1 ================= -->
+<section class="slide todo" id="ad-aiclarity" data-title="Ad #1 · AI Clarity">
+  <div class="kicker">ad break</div><h1 class="display">AI Clarity <em>Network</em></h1>
+  <p class="plan">late-night infomercial, VHS, Gemini TTS announcer. "Your CEO asked what an agent is. Again."</p><span class="time">0:45</span>
+</section>
+
+<!-- ================= THE GAME ================= -->
+<section class="slide todo" id="game-rules" data-title="The game">
+  <div class="kicker">act two</div><h1 class="display">The <em>game</em></h1>
+  <p class="plan">3D chain of models passing a message down the line, each hop degrading it</p><span class="time">1:30</span>
+</section>
+<section class="slide todo" id="live" data-title="LIVE DEMO">
+  <div class="kicker">live</div><h1 class="display">Your turn.</h1>
+  <p class="plan">QR to upload a photo → switch to the app</p><span class="time">5:00</span>
+</section>
+
+<!-- ================= ADS 2 + 3 (while the video renders) ================= -->
+<section class="slide todo" id="ad-afterthat" data-title="Ad #2 · AfterThat">
+  <div class="kicker">ad break</div><h1 class="display">afterthat<em>.chat</em></h1>
+  <p class="plan">two-voice TTS skit: "great meeting you!" … and then they never talked again</p><span class="time">0:45</span>
+</section>
+<section class="slide todo" id="ad-odenli" data-title="Ad #3 · Odenli (teaser)">
+  <div class="kicker">coming soon</div><h1 class="display">Odenli</h1>
+  <p class="plan">movie-trailer voice: "In a world… where the foundation takes three weeks…" → eleven minutes. teaser only</p><span class="time">0:45</span>
+</section>
+
+<!-- ================= REVEAL + WRAP ================= -->
+<section class="slide todo" id="reveal" data-title="Reveal">
+  <div class="kicker">the reveal</div><h1 class="display">What did we <em>lose?</em></h1>
+  <p class="plan">first vs last, side by side</p><span class="time">1:00</span>
+</section>
+<section class="slide todo" id="links" data-title="Links">
+  <div class="kicker">thanks</div><h1 class="display">Links</h1>
+  <p class="plan">QR wall: ai-telephone repo · jev-axi · aiclaritynetwork.com · afterthat.chat</p><span class="time">0:30</span>
+</section>
+
+</div></div>
+
+<div class="hud"><div class="bar"><i></i></div><span class="count"></span></div>
+<div id="overview"></div>
+
+<script src="deck.js"></script>
+<script src="js/run-data.js"></script>
+<script src="js/cold-open.js"></script>
+<script src="js/about.js"></script>
+</body>
+</html>

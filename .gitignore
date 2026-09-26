@@ -1,0 +1,6 @@
+# secrets
+.env
+# regenerable screenshots
+world/shots/
+node_modules/
+*.log
