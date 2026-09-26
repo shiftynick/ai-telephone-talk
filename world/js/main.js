@@ -12,6 +12,9 @@ import { STOPS, buildGraph, route, landmarkAt } from './map.js';
 import { buildTerrain } from './terrain.js';
 import { buildLandmark } from './landmarks.js';
 import { buildProps } from './props.js';
+import { createAudio } from './audio.js';
+
+const audio = createAudio();
 
 const Q = new URLSearchParams(location.search);
 const $ = (s) => document.querySelector(s);
@@ -253,7 +256,7 @@ function arrive(node) {
   pig.play('idle', { fade: 0.25 });
   const st = stopOf(node);
   setCard(st);
-  if (st) st.pop = 1;
+  if (st) { st.pop = 1; audio.arrive(); }
   save();
   if (st) preload(st);
 }
@@ -351,9 +354,12 @@ function setRoute(on) {
   r.querySelector('.v').textContent = on ? 'full route' : 'express route';
   for (const s of stops) s.el.classList.toggle('dim', !on && !!s.tech);
   props.setTechOpen?.(on);
+  if (routeReady) audio.gate(on);
   save();
 }
+let routeReady = false;
 setRoute(techRoute);
+routeReady = true;
 
 const tmpV = new THREE.Vector3();
 function toScreen(p) {
@@ -419,6 +425,7 @@ async function openStop(st) {
   const dir = st.lm.group.position.clone().sub(home).setY(0).normalize();
   player.targetYaw = Math.atan2(dir.x, dir.z);
   pig.play('walk', { fade: 0.15 });
+  audio.open();
   tween(850, (t) => player.pos.copy(home).addScaledVector(dir, 1.15 * t), (t) => t).then(() => pig.play('idle', { fade: 0.2 }));
   const from = { f: cam.focus.clone(), d: cam.dist };
   const lmFocus = st.lm.group.position.clone().add(new THREE.Vector3(0, 1.4, 0));
@@ -433,6 +440,7 @@ async function openStop(st) {
   await tween(850, (t) => iris(R * t, at));
   await zoom;
   stageEl.style.clipPath = 'none';
+  audio.duck(true);
   overlay.open = true; overlay.busy = false;
   frame.focus();
   frame.contentWindow?.focus();
@@ -447,6 +455,8 @@ async function closeStop(reason) {
   const lmFocus = st.lm.group.position.clone().add(new THREE.Vector3(0, 1.4, 0));
   const at = toScreen(lmFocus);
   const R = Math.hypot(Math.max(at.x, innerWidth - at.x), Math.max(at.y, innerHeight - at.y)) + 20;
+  audio.duck(false);
+  audio.close(false);
   await tween(700, (t) => iris(R * (1 - t), at));
   stageEl.classList.remove('open');
   frame.src = 'about:blank';
@@ -458,7 +468,7 @@ async function closeStop(reason) {
   pig.play('walk', { fade: 0.1 });
   const walkOut = tween(700, (t) => player.pos.copy(door).lerp(home, t), (t) => t).then(() => {
     player.targetYaw = Math.PI / 4;
-    if (reason === 'end') { pig.play('cheer', { loop: false }); props.celebrate?.(st, reason); st.lm.celebrate?.(); }
+    if (reason === 'end') { pig.play('cheer', { loop: false }); props.celebrate?.(st, reason); st.lm.celebrate?.(); audio.jingle(); audio.oink(); }
     else pig.play('idle', { fade: 0.2 });
   });
   const from = { f: cam.override?.focus.clone() || cam.focus.clone(), d: cam.override?.dist ?? 13 };
@@ -485,6 +495,9 @@ if (playing) document.body.classList.add('playing');
 const ARROWS = { ArrowRight: 'right', ArrowLeft: 'left', ArrowUp: 'up', ArrowDown: 'down', d: 'right', a: 'left', w: 'up', s: 'down' };
 addEventListener('keydown', (e) => {
   const k = e.key;
+  if (!['Shift', 'Control', 'Alt', 'Meta'].includes(k)) audio.start();
+  if (k === 'm' || k === 'M') { setSoundChip(audio.toggleMute()); return; }
+  if (k === '[' || k === ']') { audio.musicUp(k === ']' ? 0.1 : -0.1); setSoundChip(audio.muted); return; }
   if (k === 'f' || k === 'F') { toggleFullscreen(); return; }
   if (k === 'b' || k === 'B' || k === '.') { document.body.classList.toggle('blackout'); return; }
   if (overlay.open) {
@@ -525,6 +538,7 @@ function startPlaying() {
   if (playing) return;
   playing = true;
   document.body.classList.add('playing');
+  audio.swell();
   const from = { f: overview.focus.clone(), d: overview.dist };
   cam.override = { focus: from.f.clone(), dist: from.d };
   tween(3200, (t) => {
@@ -540,6 +554,7 @@ function toggleOverview() {
   if (overlay.open || overlay.busy) return;
   overviewOn = !overviewOn;
   document.body.classList.toggle('overview', overviewOn);
+  if (overviewOn) audio.whooshUp(1.4, 0.09); else audio.whooshDown(1.4, 0.09);
   const from = { f: (cam.override?.focus || cam.focus).clone(), d: cam.override?.dist ?? cam.dist };
   const to = overviewOn ? overview : null;
   tween(1800, (t) => {
@@ -547,6 +562,14 @@ function toggleOverview() {
     cam.override = { focus: from.f.clone().lerp(f, t), dist: THREE.MathUtils.lerp(from.d, d, t) };
   }).then(() => { if (!overviewOn) cam.override = null; });
 }
+
+// sound on/off chip (M)
+function setSoundChip(m) {
+  const c = $('#sound');
+  c.classList.toggle('off', !!m);
+  c.querySelector('.v').textContent = m ? 'sound off' : 'sound on';
+}
+setSoundChip(audio.muted);
 
 // progress dots under the brand
 const dots = $('#dots');
@@ -569,6 +592,7 @@ function updateDots() {
 // ---------------------------------------------------------------- loop
 const timer = new THREE.Timer();
 let dayNow = 0;
+let stepT = 0;
 let t = 0;
 const fwd = new THREE.Vector3();
 function frameLoop() {
@@ -609,6 +633,16 @@ function frameLoop() {
   pigLight.position.set(player.pos.x + 1.3, 1.9, player.pos.z + 1.3);
   pig.update(dt);
   updateDust(dt);
+  // footsteps: two per walk cycle, sounding like whatever is underfoot
+  if (player.walk) {
+    stepT -= dt;
+    if (stepT <= 0) {
+      stepT = 0.25;
+      const c = terrain.cellAt(player.pos.x, player.pos.z);
+      audio.step(!c || c.bridge ? 'wood' : c.pad ? 'stone' : c.path ? 'path' : 'grass');
+    }
+  } else stepT = 0.05;
+  audio.update(dt);
 
   // pad ring
   {
@@ -664,13 +698,22 @@ function frameLoop() {
     const target = Q.has('dusk') ? 1 : Math.min(1, done / (stops.length - 1)) * 0.9 + (stopOf(player.node)?.id === 'finale' && !player.walk ? 0.1 : 0);
     dayNow += (target - dayNow) * (1 - Math.exp(-dt * 0.6));
     setDay(dayNow);
+    audio.setDay(dayNow);
+    audio.setFinale(!player.walk && stopOf(player.node)?.id === 'finale');
+    if (props.waterfalls?.length) {
+      let d = Infinity;
+      for (const w of props.waterfalls) d = Math.min(d, w.distanceTo(player.pos));
+      audio.setWaterfall(Math.max(0, 1 - d / 14));
+    }
   }
   props.update?.(dt, t, { camera, player });
   stars.position.copy(camera.position);
   stars.material.opacity = 0.65 + Math.sin(t * 0.8) * 0.1;
   const here = !player.walk ? stopOf(player.node)?.id : null;
+  const booth = stops[0];
+  const ringVol = playing && !booth.visited && !overlay.open ? Math.max(0, 1 - booth.lm.group.position.distanceTo(player.pos) / 16) : 0;
   for (const s of stops) {
-    s.lm.update?.(dt, t, { here });
+    s.lm.update?.(dt, t, { here, audio, pigPos: player.pos, ringVol });
     if (s.pop > 0) {
       s.pop = Math.max(0, s.pop - dt * 2.2);
       const k = Math.sin((1 - s.pop) * Math.PI);
@@ -686,6 +729,6 @@ requestAnimationFrame(frameLoop);
 
 // debug handle for screenshots
 window.world = {
-  stops, player, graph, goToStop, openStop, closeStop, setRoute, pig, cam, startPlaying,
+  stops, player, graph, goToStop, openStop, closeStop, setRoute, pig, cam, startPlaying, audio,
   get state() { return { at: player.node.id, walking: !!player.walk, open: overlay.open, busy: overlay.busy, visited: stops.filter((s) => s.visited).map((s) => s.id), slide: overlay.open ? frame.contentDocument?.body?.dataset.slide : null }; },
 };

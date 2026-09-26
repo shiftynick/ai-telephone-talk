@@ -136,11 +136,14 @@ function phonebooth() {
     group.add(disc);
   }
   const pos = pf.geometry.attributes.position, base = pos.array.slice();
+  let lastPh = 99;
   // it rings every few seconds (it's the cold open: "incoming signal")
   return {
     group, anchor: new THREE.Vector3(0, 3.9, 0),
-    update(dt, t) {
+    update(dt, t, ctx) {
       const ph = t % 4.5;
+      if (ph < lastPh && ctx?.ringVol > 0) ctx.audio?.ring(ctx.ringVol);
+      lastPh = ph;
       const ring = ph < 0.9 ? Math.sin(ph * 60) * 0.03 * (1 - ph / 0.9) : 0;
       body.rotation.z = ring;
       body.position.y = ring ? Math.abs(ring) * 0.3 : 0;
@@ -828,7 +831,11 @@ function tower() {
         r.m.material.opacity = (1 - k) * 0.8;
       }
       const active = ctx?.here === 'finale' || performance.now() / 1000 < showUntil;
-      if (active && t > next) { burst(); next = t + 0.5 + Math.random() * 0.7; }
+      if (active && t > next) {
+        burst();
+        next = t + 0.5 + Math.random() * 0.7;
+        ctx?.audio?.firework(ctx.pigPos ? group.position.distanceTo(ctx.pigPos) + 8 : 12);
+      }
       for (let i = 0; i < N; i++) {
         if (life[i] <= 0) continue;
         life[i] -= dt;

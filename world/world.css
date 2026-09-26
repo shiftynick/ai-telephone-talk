@@ -107,3 +107,7 @@ body.ready #gl { opacity: 1; }
 #intro { opacity: 0; }
 body.ready #intro { opacity: 1; transition: opacity 1.6s ease .5s, transform .9s var(--ease-out); }
 body.ready.playing #intro { opacity: 0; transform: translateY(-40px); transition: opacity .9s var(--ease-out), transform .9s var(--ease-out); }
+
+.chips { display: flex; gap: 10px; align-items: flex-start; }
+#sound.off { opacity: .55; }
+#sound.off .v { text-decoration: line-through; }

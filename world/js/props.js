@@ -482,6 +482,7 @@ export function buildProps(scene, terrain, graph) {
   })();
 
   // ---------- waterfalls off the camera-facing cliffs ----------
+  const waterfalls = [];
   {
     const wc = document.createElement('canvas'); wc.width = 64; wc.height = 256;
     const wg = wc.getContext('2d');
@@ -545,6 +546,7 @@ export function buildProps(scene, terrain, graph) {
       root.add(flow, fall, rocks);
       mist.push(new THREE.Vector3(edgeX + nx * 0.8, c.top - H * 0.75, edgeZ + nz * 0.8));
     }
+    waterfalls.push(...mist);
     updaters.push((dt, t) => {
       fallTex.offset.y = t * 1.6;
       flowTex.offset.y = -t * 0.9;
@@ -596,6 +598,7 @@ export function buildProps(scene, terrain, graph) {
 
   return {
     root,
+    waterfalls,
     setTechOpen(on) { techOpen = on; },
     update(dt, t, ctx) { for (const u of updaters) u(dt, t, ctx); },
     celebrate(stop, reason) { if (reason === 'end') confetti(stop.node.pos); },
