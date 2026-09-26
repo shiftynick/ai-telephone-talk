@@ -1,7 +1,8 @@
 // All of the world's sound, synthesised live with WebAudio — no files, works offline.
 // Music: a soft generative loop (pad + electric piano + kalimba melody + bass) that
-// darkens with the sunset and ducks away while slides are open or the window loses
-// focus. Ambience: wind, birds (day), crickets (dusk), waterfalls by distance.
+// darkens with the sunset and ducks away while a stop is open. It plays whenever the
+// page is open, focused or not — M is the only mute.
+// Ambience: wind, birds (day), crickets (dusk), waterfalls by distance.
 // SFX: footsteps per surface, chimes, whooshes, jingle, fireworks, gate bell, phone ring, oink.
 
 const midi = (m) => 440 * 2 ** ((m - 69) / 12);
@@ -10,7 +11,7 @@ const SAVE = 'ai-telephone-world-audio';
 export function createAudio() {
   let ctx = null, started = false;
   let master, comp, musicBus, musicFilter, ambBus, sfxBus, verb, verbIn, noiseBuf;
-  let muted = false, musicLevel = 0.55, duckK = 1, focusK = 1, day = 0, finale = 0;
+  let muted = false, musicLevel = 0.55, duckK = 1, day = 0, finale = 0;
   try { const s = JSON.parse(localStorage.getItem(SAVE) || '{}'); muted = !!s.muted; if (s.music != null) musicLevel = s.music; } catch {}
   const save = () => { try { localStorage.setItem(SAVE, JSON.stringify({ muted, music: musicLevel })); } catch {} };
 
@@ -150,7 +151,8 @@ export function createAudio() {
   }
   function scheduler() {
     if (!ctx) return;
-    while (nextBarT < T() + 0.6) { scheduleBar(nextBarT); nextBarT += BAR; }
+    if (nextBarT < T()) nextBarT = T() + 0.05; // timer was starved: resync instead of piling up late notes
+    while (nextBarT < T() + 1.5) { scheduleBar(nextBarT); nextBarT += BAR; }
   }
 
   // ---------------------------------------------------------------- ambience
@@ -194,20 +196,11 @@ export function createAudio() {
     const t = T();
     const on = muted ? 0 : 1;
     master.gain.cancelScheduledValues(t);
-    master.gain.setTargetAtTime(1.0 * on * focusK, t, ramp / 3);
+    master.gain.setTargetAtTime(1.0 * on, t, ramp / 3);
     musicBus.gain.cancelScheduledValues(t);
     musicBus.gain.setTargetAtTime(musicLevel * duckK, t, ramp / 3);
     ambBus.gain.cancelScheduledValues(t);
     ambBus.gain.setTargetAtTime(0.8 * duckK, t, ramp / 3);
-  }
-
-  // pause everything while the window isn't the one being shown (e.g. the live demo app)
-  function watchFocus() {
-    setInterval(() => {
-      const active = document.visibilityState === 'visible' && document.hasFocus();
-      const k = active ? 1 : 0;
-      if (k !== focusK) { focusK = k; applyMix(active ? 1.5 : 0.6); }
-    }, 400);
   }
 
   // ---------------------------------------------------------------- API
@@ -224,7 +217,6 @@ export function createAudio() {
       schedTimer = setInterval(scheduler, 100);
       scheduler();
       startAmbience();
-      watchFocus();
       applyMix(2.5);
     },
     toggleMute() { muted = !muted; save(); applyMix(0.3); return muted; },

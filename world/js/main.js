@@ -334,12 +334,16 @@ function updateLabels() {
 const frame = $('#slides'), stageEl = $('#stage');
 let overlay = { open: false, busy: false, stop: null, loadedSrc: '', ready: false };
 const srcFor = (st) => st.url || `../index.html?embed=1&hold=1&only=${st.slides.join(',')}#${st.slides[0]}`;
+// the deck's own sound effects (slides/js/sfx.js) follow the world's mute
+function syncDeckMute() {
+  try { frame.contentWindow?.SFX?.setMuted?.(audio.muted); } catch { /* cross-origin (the projector) */ }
+}
 function preload(st, force = false) {
   if (st.url && !force) return; // live pages (the projector) load only when opened — they'd play sound hidden
   const src = srcFor(st);
   if (overlay.loadedSrc === src) return;
   overlay.loadedSrc = src; overlay.ready = false;
-  frame.onload = () => { if (frame.getAttribute('src') === src) overlay.ready = true; };
+  frame.onload = () => { if (frame.getAttribute('src') === src) { overlay.ready = true; if (!st.url) syncDeckMute(); } };
   frame.src = src;
 }
 const waitReady = () => new Promise((res) => {
@@ -460,7 +464,7 @@ addEventListener('keydown', (e) => {
   const k = e.key;
   const firstSound = !audio.started && !['Shift', 'Control', 'Alt', 'Meta'].includes(k);
   if (!['Shift', 'Control', 'Alt', 'Meta'].includes(k)) audio.start();
-  if (k === 'm' || k === 'M') { setSoundChip(audio.toggleMute()); return; }
+  if (k === 'm' || k === 'M') { setSoundChip(audio.toggleMute()); syncDeckMute(); return; }
   if (k === '[' || k === ']') { audio.musicUp(k === ']' ? 0.1 : -0.1); setSoundChip(audio.muted); return; }
   if (k === 'f' || k === 'F') { toggleFullscreen(); return; }
   if (k === 'b' || k === 'B' || k === '.') { document.body.classList.toggle('blackout'); return; }
