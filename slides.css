@@ -681,3 +681,25 @@
 .cl-qr span { display: block; margin-top: 16px; font-size: 30px; color: var(--muted); }
 .cl-qr code { display: block; margin-top: 26px; font-size: 28px; color: #d8c27e; }
 .cl-qr.at { border-color: rgba(180,154,82,.5); background: rgba(40,84,71,.25); }
+/* beat 3: a GitHub-style repo card (GitHub's dark theme) */
+.ax-gh { position: absolute; left: 1100px; right: 110px; top: 530px; padding: 34px 36px 30px; border-radius: 14px; background: #0d1117; border: 1px solid #30363d; box-shadow: 0 30px 90px rgba(0,0,0,.55); font-family: -apple-system, "Segoe UI", "Space Grotesk", sans-serif; color: #e6edf3; opacity: 0; transform: translateX(60px); transition: opacity .5s .3s, transform .7s .3s var(--ease-out); }
+#jev-axi[data-beat="3"] .ax-gh { opacity: 1; transform: none; }
+.ax-gh svg { width: 1em; height: 1em; fill: currentColor; vertical-align: -.12em; flex: none; }
+.gh-head { display: flex; align-items: center; gap: 14px; font-size: 32px; color: #7d8590; }
+.gh-head .who { color: #4493f8; } .gh-head b { color: #4493f8; font-weight: 600; }
+.gh-head em { margin-left: 6px; padding: 2px 12px; border: 1px solid #30363d; border-radius: 999px; font: normal 500 18px sans-serif; color: #7d8590; }
+.gh-desc { margin: 18px 0 0; font-size: 23px; line-height: 1.45; color: #9198a1; }
+.gh-topics { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.gh-topics span { padding: 4px 13px; border-radius: 999px; background: rgba(56,139,253,.15); color: #4493f8; font-size: 18px; font-weight: 500; }
+.gh-stats { display: flex; flex-wrap: wrap; gap: 14px 30px; margin-top: 26px; font-size: 22px; color: #9198a1; }
+.gh-stats span { display: inline-flex; align-items: center; gap: 8px; }
+.gh-stats b { color: #e6edf3; font-weight: 600; font-variant-numeric: tabular-nums; }
+.gh-stats .star svg { color: #e3b341; }
+.gh-lang { margin-top: 24px; }
+.gh-bar { display: flex; height: 10px; border-radius: 6px; overflow: hidden; background: #21262d; }
+.gh-bar i { height: 100%; width: 0; transition: width 1s var(--ease-out); }
+.gh-bar i + i { margin-left: 2px; }
+.gh-legend { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 12px; font-size: 18px; color: #9198a1; }
+.gh-legend span { display: inline-flex; align-items: center; gap: 8px; }
+.gh-legend span::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--c); }
+.gh-legend b { color: #e6edf3; font-weight: 600; }
