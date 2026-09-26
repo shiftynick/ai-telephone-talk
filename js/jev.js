@@ -1,19 +1,20 @@
 /* Jev.
    Beat 1 plays by itself: the "My name is Jeff" clip → the "My name is Jev" meme slams in → the title.
    Space → beat 2 ("what is Jev?" images). Space → beat 3 (a chatty LLM vs Jev's probabilities; an example).
-   Space → beat 4 (the explainer video; Space during it skips to its end). Space → the next slide. */
+   Space → beat 4 (TypeSafe's Doom demo, first 28 s, with sound). Space → beat 5 (the explainer video).
+   Space during either video skips to its end. Space → the next slide. */
 (() => {
   const el = document.getElementById('jev');
   if (!el) return;
   const $ = (s) => el.querySelector(s);
-  const jeff = $('.jv-jeff'), explainer = $('.jv-explainer');
+  const jeff = $('.jv-jeff'), doom = $('.jv-doom'), explainer = $('.jv-explainer');
   const CHATTY = 'Great question! Based on the content of the message, it seems the customer may be asking about an invoice, which usually points to a billing issue. However, it could also be an account support request, depending on the context. To be thorough, let’s consider a few possibilities before we decide on the best queue for this message…';
   const ANSWER = [['billing', 0.94], ['support', 0.05], ['sales', 0.01]];
   let alive = false, beat = 1, timers = [];
 
   const later = (ms, fn) => timers.push(Deck.after(ms, fn));
   const muted = () => !!window.SFX?.muted;
-  function stopVideos() { for (const v of [jeff, explainer]) { v.pause(); v.currentTime = 0; } }
+  function stopVideos() { for (const v of [jeff, doom, explainer]) { v.pause(); v.currentTime = 0; } }
 
   function setBeat(n) {
     beat = n;
@@ -60,10 +61,17 @@
     }
   }
 
-  function explain() {
-    explainer.muted = muted();
-    explainer.currentTime = 0;
-    explainer.play().catch(() => {});
+  function play(v) {
+    v.muted = muted();
+    v.currentTime = 0;
+    v.play().catch(() => {});
+  }
+  // the first press during a video skips it to its end; the next one moves on
+  function skip(v) {
+    if (v.paused || v.ended) return false;
+    v.pause();
+    v.currentTime = Math.max(0, (v.duration || 1) - 0.05);
+    return true;
   }
 
   Deck.on('jev', {
@@ -77,13 +85,13 @@
     next() {
       if (beat === 1) { jeff.pause(); if (!el.classList.contains('titled')) { el.classList.add('slammed', 'titled'); } setBeat(2); memes(); return true; }
       if (beat === 2) { setBeat(3); compare(); return true; }
-      if (beat === 3) { setBeat(4); explain(); return true; }
-      // beat 4: first press skips the explainer to its end, the next one moves on
-      if (!explainer.paused && !explainer.ended) { explainer.pause(); explainer.currentTime = Math.max(0, (explainer.duration || 1) - 0.05); return true; }
-      return false;
+      if (beat === 3) { setBeat(4); play(doom); return true; }
+      if (beat === 4) { if (!skip(doom)) { setBeat(5); play(explainer); } return true; }
+      return skip(explainer);
     },
     prev() {
-      if (beat === 4) { explainer.pause(); setBeat(3); compare(); return true; }
+      if (beat === 5) { explainer.pause(); setBeat(4); play(doom); return true; }
+      if (beat === 4) { doom.pause(); setBeat(3); compare(); return true; }
       if (beat === 3) { setBeat(2); el.classList.add('fg'); return true; }
       if (beat === 2) { setBeat(1); el.classList.add('slammed', 'titled'); return true; }
       return false;

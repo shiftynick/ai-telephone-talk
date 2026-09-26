@@ -214,10 +214,13 @@
     <p class="jv-stats mono">typed questions in · calibrated probabilities out · ~400 ms · a few thousandths of a cent</p>
   </div>
   <!-- beat 4: the explainer -->
-  <div class="jv-beat jv-b4"><video class="jv-explainer" src="assets/videos/jev-explained.mp4" playsinline preload="auto"></video></div>
+  <div class="jv-beat jv-b4"><video class="jv-doom" src="assets/videos/jev-doom-clip.mp4" playsinline preload="auto"></video>
+    <p class="jv-doom-cap mono">TypeSafe’s demo · Jev plays Doom · game state in, typed decisions out</p></div>
+  <div class="jv-beat jv-b5"><video class="jv-explainer" src="assets/videos/jev-explained.mp4" playsinline preload="auto"></video></div>
   <aside class="notes">Beat 1 plays by itself (Jeff clip → My name is Jev → title). Space → "what the hell is Jev?" memes.
     Space → the comparison (a chatty LLM vs Jev's probabilities; the question/answer is an example).
-    Space → the 64s explainer video (Space during it skips to its end). Space → jev-axi.</aside>
+    Space → TypeSafe's Doom demo (first 28 s, with sound). Space → the 64s explainer video (Space during either video skips to its end).
+    Space → the moat slide.</aside>
 </section>
 <section class="slide" id="jev-moat" data-title="Does Jev have a moat?">
   <div class="kicker jm-kicker">jev · the moat question</div>
@@ -390,15 +393,48 @@
 <!-- ================= 8 · THE AI TELEPHONE GAME: the world embeds the live projector here (no slide) ================= -->
 
 <!-- ================= 9 · AD #3: Odenli, teaser (world stop 9) ================= -->
-<section class="slide todo" id="ad-odenli" data-title="Ad #3 · Odenli (teaser)">
-  <div class="kicker">coming soon</div><h1 class="display">Odenli</h1>
-  <p class="plan">movie-trailer voice: "In a world… where the foundation takes three weeks…" → eleven minutes. teaser only</p><span class="time">0:45</span>
+<section class="slide" id="ad-odenli" data-title="Ad #3 · Odenli (teaser)">
+  <div class="kicker od-kicker">ad break · coming soon</div>
+  <canvas class="od-gl" width="1920" height="1080"></canvas>
+  <div class="od-card"></div>
+  <div class="od-pick">
+    <div class="od-boxes">
+      <div class="od-box"><i></i><span>Fast</span></div>
+      <div class="od-box"><i></i><span>Cost-efficient</span></div>
+      <div class="od-box"><i></i><span>Production-grade</span></div>
+    </div>
+    <p class="od-rule"></p>
+  </div>
+  <div class="od-found">
+    <h2 class="od-fh">Most apps start <em>80% built.</em></h2>
+    <div class="od-bar"><div class="od-fill"><b class="mono">0%</b><span>the foundation</span></div><div class="od-rest"><span>the part that’s about your business</span></div></div>
+    <div class="od-tags"></div>
+    <p class="od-fq">built · tested · stable · secure</p>
+  </div>
+  <svg class="od-cursor" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2l15 11-7 1-3.5 7z"/></svg>
+  <div class="od-brand">
+    <div class="od-word">Odenli.</div>
+    <p class="od-h">Great software.<br><em>Without the usual tradeoffs.</em></p>
+    <p class="od-sub">Software development, rebuilt</p>
+    <p class="od-soon mono">New client partnerships opening soon</p>
+  </div>
+  <aside class="notes">Teaser only, no link. Beat 1 plays by itself: "In a world… where software makes you pick two" — the checkboxes
+    keep unticking each other. Space → "One company…" — all three tick, then why: most apps start 80% built (the foundation:
+    built, tested, stable, secure; the last 20% is the business). Space → the lattice and Odenli. Space → back to the world.
+    Wording is from odenli.com and Nick.</aside>
 </section>
 
 <!-- ================= 10 · CLOSING (world stop 10) ================= -->
-<section class="slide todo" id="closing" data-title="Closing">
-  <div class="kicker">thanks</div><h1 class="display">Thanks<em>.</em></h1>
-  <p class="plan">closing: thanks + QR wall (ai-telephone repo · jev-axi · aiclaritynetwork.com · afterthat.chat)</p><span class="time">0:30</span>
+<section class="slide" id="closing" data-title="Closing">
+  <div class="kicker cl-kicker">dirty south ai · thanks for coming</div>
+  <h1 class="display cl-h1">Thanks<em>.</em></h1>
+  <p class="cl-me">Nick <span>· shifty</span></p>
+  <p class="cl-bio mono">software engineer struggling with token–life balance</p>
+  <canvas class="cl-mascot" width="1320" height="1240"></canvas>
+  <div class="cl-qrs">
+    <div class="cl-qr at"><img src="assets/qr/afterthat-tonight.png" alt="QR code: tonight's AfterThat chat"><div><b>Everything from tonight is in the meetup chat</b><span>links, repos and slides, posted in AfterThat</span><code>afterthat.chat/join/DSAI-072626</code></div></div>
+  </div>
+  <aside class="notes">Plays by itself: Thanks, the mascot cheers then waves, the meetup-chat QR pops in (everything from tonight gets posted there). Space → back to the world.</aside>
 </section>
 
 <!-- ================= NOT IN THE TALK FLOW (kept in case): the "who am I" slide ================= -->
@@ -436,5 +472,7 @@
 <script src="js/jev-moat.js"></script>
 <script src="js/jev-axi.js"></script>
 <script src="js/omarchy.js"></script>
+<script src="js/ad-odenli.js"></script>
+<script src="js/closing.js"></script>
 </body>
 </html>
