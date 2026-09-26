@@ -77,5 +77,9 @@
       }
       return false;
     },
+    prev() {
+      if (beat > 1) { setBeat(beat - 1); return true; }
+      return false;
+    },
   });
 })();

@@ -82,5 +82,11 @@
       if (!explainer.paused && !explainer.ended) { explainer.pause(); explainer.currentTime = Math.max(0, (explainer.duration || 1) - 0.05); return true; }
       return false;
     },
+    prev() {
+      if (beat === 4) { explainer.pause(); setBeat(3); compare(); return true; }
+      if (beat === 3) { setBeat(2); el.classList.add('fg'); return true; }
+      if (beat === 2) { setBeat(1); el.classList.add('slammed', 'titled'); return true; }
+      return false;
+    },
   });
 })();

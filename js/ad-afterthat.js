@@ -114,5 +114,10 @@
       if (!revealed) { reveal(); return true; }
       return false;
     },
+    prev() {
+      if (!revealed) return false;
+      Deck.replay();
+      return true;
+    },
   });
 })();

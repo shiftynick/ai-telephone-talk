@@ -1,7 +1,7 @@
 /* AI Telephone deck — tiny zero-dependency slide engine.
    Canvas is a fixed 1920x1080 stage, scaled to fit.
 
-   Keys: →/Space/PgDn next · ←/PgUp prev · Home/End · F fullscreen · O overview
+   Keys: →/Space/PgDn next · ←/PgUp back one beat (or the previous slide) · Home/End · F fullscreen · O overview
          R replay current slide · B black screen · N notes window
 
    Slides are <section class="slide" id="…">. Scripts register behaviour with:
@@ -10,10 +10,11 @@
        enter(el) {},   // slide became active (start timelines here)
        leave(el) {},   // slide lost focus (stop timers, pause media)
        next(el) {},    // return true to consume a "next" press (e.g. skip / step)
+       prev(el) {},    // return true to consume a "prev" press (step back a beat)
      });
 
    Simple steps without JS: give elements class="step"; each "next" reveals the
-   next one (adds .on) before moving to the following slide.
+   next one (adds .on) before moving to the following slide; "prev" hides them again.
 
    Embed mode (used by the world map, world/index.html, which shows the deck in
    an iframe): ?embed=1&only=id,id#id — the HUD is hidden, navigation stays
@@ -44,7 +45,7 @@
     on(id, h) { handlers[id] = h; if (slides[i]?.id === id) h.enter?.(slides[i]); },
     get index() { return i; },
     go: (n) => set(n),
-    next, prev,
+    next, prev, replay: () => replay(),
     // setTimeout that is cancelled automatically when the slide is left
     after(ms, fn) { const t = setTimeout(fn, ms); timers.push(t); return t; },
     sleep(ms) { return new Promise((r) => Deck.after(ms, r)); },
@@ -97,7 +98,13 @@
     if (EMBED && i === slides.length - 1) { exit('end'); return; }
     set(i + 1);
   }
-  function prev() { set(i - 1); }
+  function prev() {
+    const cur = slides[i];
+    if (handlers[cur.id]?.prev?.(cur)) return;
+    const shown = cur.querySelectorAll('.step.on');
+    if (shown.length) { shown[shown.length - 1].classList.remove('on'); return; }
+    set(i - 1);
+  }
   function replay() { const n = i; i = -1; slides[n].classList.remove('active'); set(n, { replay: true }); }
 
   // ---- presenter notes: <aside class="notes"> inside a slide, press N ----

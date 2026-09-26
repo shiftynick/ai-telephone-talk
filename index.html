@@ -219,6 +219,60 @@
     Space → the comparison (a chatty LLM vs Jev's probabilities; the question/answer is an example).
     Space → the 64s explainer video (Space during it skips to its end). Space → jev-axi.</aside>
 </section>
+<section class="slide" id="jev-moat" data-title="Does Jev have a moat?">
+  <div class="kicker jm-kicker">jev · the moat question</div>
+  <!-- beat 1: the clones arrive -->
+  <div class="jm-beat jm-b1">
+    <h1 class="display jm-h1">Does Jev have a <em>moat?</em></h1>
+    <div class="jm-launch">
+      <span class="mono">Sep 15</span>
+      <b>Jev launches</b>
+      <i class="mono">closed weights · API only</i>
+    </div>
+    <div class="jm-week mono">within a week →</div>
+    <div class="jm-clones"></div>
+    <div class="jm-count"><b class="mono">0</b><span>open alternatives listed<br><i class="mono">madewithjev.com · Sep 22</i></span></div>
+  </div>
+  <!-- beat 2: their claims -->
+  <div class="jm-beat jm-b2">
+    <h1 class="display jm-h1">Some claim to <em>beat it</em></h1>
+    <div class="jm-claims"></div>
+    <p class="jm-foot mono">each project’s own numbers, from its README or launch post</p>
+  </div>
+  <!-- beat 3: the independent test -->
+  <div class="jm-beat jm-b3">
+    <div class="jm-test">
+      <h2 class="jm-h2">An independent test</h2>
+      <p class="jm-sub mono">49 tasks · 869 cases · zero-shot</p>
+      <div class="jm-bars">
+        <div class="jm-row jev"><span>Jev</span><i><u style="--v:.966"></u></i><b class="mono">0.966</b></div>
+        <div class="jm-row open"><span>best open (von, 395M)</span><i><u style="--v:.704"></u></i><b class="mono">0.704</b></div>
+      </div>
+      <p class="jm-src mono">jabr/classifier-benchmark</p>
+      <div class="jm-wins">
+        <p class="open"><b>Open wins</b> speed · price · control</p>
+        <p class="jev"><b>Jev wins</b> accuracy · calibrated confidence</p>
+      </div>
+    </div>
+    <svg class="jm-castle" viewBox="0 0 520 440" aria-hidden="true">
+      <path class="moat" d="M0 360q26-10 52 0t52 0 52 0 52 0 52 0 52 0 52 0 52 0 52 0 52 0"/>
+      <g class="wall">
+        <rect x="70" y="150" width="80" height="180"/><rect x="370" y="150" width="80" height="180"/>
+        <rect x="150" y="205" width="220" height="125"/><rect x="215" y="110" width="90" height="220"/>
+        <rect x="70" y="132" width="20" height="20"/><rect x="100" y="132" width="20" height="20"/><rect x="130" y="132" width="20" height="20"/><rect x="370" y="132" width="20" height="20"/><rect x="400" y="132" width="20" height="20"/><rect x="430" y="132" width="20" height="20"/><rect x="160" y="189" width="20" height="18"/><rect x="190" y="189" width="20" height="18"/><rect x="315" y="189" width="20" height="18"/><rect x="345" y="189" width="20" height="18"/><rect x="215" y="92" width="20" height="20"/><rect x="250" y="92" width="20" height="20"/><rect x="285" y="92" width="20" height="20"/>
+      </g>
+      <g class="win"><rect x="100" y="190" width="20" height="30"/><rect x="400" y="190" width="20" height="30"/><rect x="250" y="150" width="20" height="30"/></g>
+      <path class="gate" d="M232 330V290a28 28 0 0 1 56 0V330z"/>
+      <rect class="bridge" x="232" y="262" width="56" height="68"/>
+      <path class="pole" d="M260 92V38"/><path class="flag" d="M260 40h44l-12 11 12 11h-44z"/>
+    </svg>
+    <p class="display jm-punch">A thin moat, <em>and the drawbridge is down.</em></p>
+  </div>
+  <aside class="notes">Beat 1 plays by itself: Jev launched Sep 15; within a week, open clones (35 listed by Sep 22). Space → their claims
+    (honest caveats on screen). Space → the independent 49-task benchmark: Jev 0.966 vs best open 0.704. Open wins on speed, price and control;
+    Jev still wins on zero-shot accuracy and calibrated confidence. Space → jev-axi.</aside>
+</section>
+
 <section class="slide" id="jev-axi" data-title="jev-axi">
   <div class="kicker ax-kicker">i made a thing · jev-axi</div>
   <div class="ax-term">
@@ -247,15 +301,90 @@
 </section>
 
 <!-- ================= 6 · Omarchy (world stop 6) ================= -->
-<section class="slide todo" id="omarchy" data-title="Omarchy">
-  <div class="kicker">toolbox · 01</div><h1 class="display">Omarchy</h1>
-  <p class="plan">"get in loser" → fake Hyprland desktop with windows tiling in</p><span class="time">0:45</span>
+<section class="slide" id="omarchy" data-title="Omarchy">
+  <div class="kicker om-kicker">toolbox · omarchy</div>
+  <!-- beat 1: the gag -->
+  <div class="om-beat om-b1">
+    <img class="om-meme" src="assets/omarchy-getinloser.png" alt="meme: get in loser, we are running Omarchy">
+    <div class="om-logo"><img src="assets/omarchy.avif" alt="Omarchy: Beautiful, Modern &amp; Opinionated Linux by DHH"></div>
+  </div>
+  <!-- beat 2: a mock Omarchy desktop (built here, in this laptop's theme + wallpaper; shortcuts from its live Hyprland config) -->
+  <div class="om-beat om-b2">
+    <div class="om-desk">
+      <div class="om-topbar mono">
+        <div class="om-left"><svg class="om-mark" viewBox="-10 10 155 255"><path fill-rule="evenodd" d="m105 30.002h15v14.997h15v180.001h-15v15h-15v15.002h-75v-15.002h-15v-15h-15v-180.001h15v-14.997h15v-15.002h75zm-60 194.998h45v-179.998h-45z"/></svg><span class="om-ws"><b>1</b><i>2</i><i>3</i><i>4</i></span><span class="om-title">~</span></div>
+        <div class="om-clock">Sat 26 Sep 19:42</div>
+        <div class="om-right">
+          <span class="om-quota" title="Agent Quota Bar"><span class="om-q-cl">90%</span><span class="om-q-co">5%</span></span>
+          <svg viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1.2"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4zM16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 3v8M6.3 6.3a8 8 0 1 0 11.4 0"/></svg>
+        </div>
+      </div>
+      <div class="om-area"></div>
+      <div class="om-menu mono">
+        <div class="om-menu-h">›<span class="om-caret">▍</span></div>
+        <div class="sel">Apps</div><div>Learn</div><div>Trigger</div><div>Style</div><div>Setup</div><div>Install</div><div>Remove</div><div>Update</div><div>About</div><div>System</div>
+      </div>
+    </div>
+    <div class="om-keys mono"></div>
+    <p class="om-cap mono">tiling · keyboard-first · beautiful by default</p>
+  </div>
+  <!-- beat 3: Nick's plugins -->
+  <div class="om-beat om-b3">
+    <h1 class="display om-h1">I write <em>plugins</em> for it</h1>
+    <div class="om-cards">
+      <div class="om-card">
+        <div class="om-barmock mono"><span class="om-q-cl">Cl 90%</span><span class="om-q-co">Co 5%</span></div>
+        <h2>Agent Quota Bar</h2>
+        <p>My AI agents’ remaining quota, right in the Omarchy bar.</p>
+        <p class="om-small mono">token–life balance, now monitored</p>
+      </div>
+      <div class="om-card om-card-img">
+        <img src="assets/omarchy/kbrgb-preview.png" alt="kbrgb Keyboard Lighting panel">
+        <div><h2>kbrgb Keyboard Lighting</h2><p>Keyboard lighting control, built into the bar.</p></div>
+      </div>
+    </div>
+    <p class="om-site mono">omarchy.org</p>
+  </div>
+  <aside class="notes">Beat 1 plays by itself (the meme, then the logo). Space → the mock desktop tiling itself with the real shortcuts
+    (SUPER+Return, SUPER+Shift+B, SUPER+Shift+N, SUPER+J, SUPER+F, SUPER+Space). Space → my two plugins. Space → back to the world.</aside>
 </section>
 
 <!-- ================= 7 · AD #2: AI Clarity Network (world stop 7) ================= -->
-<section class="slide todo" id="ad-aiclarity" data-title="Ad #2 · AI Clarity">
-  <div class="kicker">ad break</div><h1 class="display">AI Clarity <em>Network</em></h1>
-  <p class="plan">late-night infomercial, VHS, Gemini TTS announcer. "Your CEO asked what an agent is. Again."</p><span class="time">0:45</span>
+<section class="slide" id="ad-aiclarity" data-title="Ad #2 · AI Clarity">
+  <div class="kicker aic-kicker">ad break · a thing I built</div>
+  <!-- beat 1: the headline firehose (made-up headlines) -->
+  <div class="aic-noise"><div class="aic-cols"></div></div>
+  <div class="aic-boss"><div class="aic-av">CEO</div><div><span class="aic-who">Your CEO · now</span><div class="aic-said"></div></div></div>
+  <!-- beats 2–3: the site's own look -->
+  <div class="aic-light">
+    <div class="aic-top"><b>AI Clarity</b><span class="mono">the AI Clarity Network</span></div>
+    <div class="aic-b2">
+      <div class="aic-eyebrow mono">AI, explained for the people accountable for it</div>
+      <h1 class="aic-h1">Understand AI well enough to use it where you work.</h1>
+      <div class="aic-map"></div>
+    </div>
+    <div class="aic-b3">
+      <div class="aic-eyebrow mono">Understand it · the AI curriculum</div>
+      <h1 class="aic-h1 aic-h1b">Zero to 100 in <em>plain English.</em></h1>
+      <div class="aic-cur">
+        <ol class="aic-mods"></ol>
+        <div class="aic-depth">
+          <p class="mono">6 modules · 30 concepts · every concept three ways</p>
+          <div class="aic-reads"><span><b>1 min</b>plain</span><span><b>5 min</b>working</span><span><b>15 min</b>deep</span></div>
+          <p class="aic-src mono">all source-linked and verified</p>
+        </div>
+      </div>
+      <div class="aic-get">
+        <img src="assets/qr/ai-clarity.png" alt="QR code: aiclaritynetwork.com">
+        <div><code>aiclaritynetwork.com</code><span>free to read · a twice-weekly briefing is in the works</span></div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Beat 1 plays by itself: the AI headline firehose (made-up headlines), then the CEO's question; it moves on by itself
+    (or Space). Beat 2: three headlines, each answered by a real concept from the curriculum. Space → the curriculum + QR (home page).
+    Space → back to the world. The newsletter isn't launched yet; the curriculum is live.</aside>
 </section>
 
 <!-- ================= 8 · THE AI TELEPHONE GAME: the world embeds the live projector here (no slide) ================= -->
@@ -300,9 +429,12 @@
 <script src="js/cold-open.js"></script>
 <script src="js/about.js"></script>
 <script src="js/ad-afterthat.js"></script>
+<script src="js/ad-aiclarity.js"></script>
 <script src="js/opencode.js"></script>
 <script src="js/t3code.js"></script>
 <script src="js/jev.js"></script>
+<script src="js/jev-moat.js"></script>
 <script src="js/jev-axi.js"></script>
+<script src="js/omarchy.js"></script>
 </body>
 </html>

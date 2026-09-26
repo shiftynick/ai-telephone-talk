@@ -14,7 +14,7 @@ export const STOPS = [
   { id: 'afterthat', n: 2, title: 'AfterThat', sub: 'ad break', ad: true, slides: ['ad-afterthat'], at: [-17, -2.5], kind: 'phonead', isle: 'A' },
   { id: 'opencode', n: 3, title: 'OpenCode', sub: '+ free models', slides: ['opencode'], at: [-10, 1.5], kind: 'opencode', isle: 'A' },
   { id: 't3code', n: 4, title: 'T3 Code', slides: ['t3code'], at: [-2.5, -2], kind: 't3code', isle: 'B' },
-  { id: 'jev', n: 5, title: 'Jev', sub: '+ jev-axi', slides: ['jev', 'jev-axi'], at: [4.5, 1.5], kind: 'jev', isle: 'B', lmAt: [0, -3.3] },
+  { id: 'jev', n: 5, title: 'Jev', sub: '+ jev-axi', slides: ['jev', 'jev-moat', 'jev-axi'], at: [4.5, 1.5], kind: 'jev', isle: 'B', lmAt: [0, -3.3] },
   { id: 'omarchy', n: 6, title: 'Omarchy', slides: ['omarchy'], at: [11.5, -2.5], kind: 'omarchy', isle: 'B' },
   { id: 'aiclarity', n: 7, title: 'AI Clarity', sub: 'ad break', ad: true, slides: ['ad-aiclarity'], at: [19, 1], kind: 'billboard', isle: 'C' },
   { id: 'game', n: 8, title: 'The game', sub: 'AI Telephone · live', url: 'http://localhost:8787/present?embed=1', at: [26, -2], kind: 'stage', isle: 'C' },
