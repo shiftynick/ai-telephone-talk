@@ -1,51 +1,50 @@
-# Talk slides — AI Telephone
+# AI Telephone — the talk
 
-This folder is **gitignored on purpose**: it's the meetup deck, not part of the
-shared repo (the repo, minus these slides, is the open-source part).
+The deck from Nick "shifty" Underwood's talk at the Dirty South AI meetup (2026-09-26): a hand-built HTML
+slide deck, opened from a walkable 3D voxel world, around the live **AI Telephone** game
+([shiftynick/ai-telephone](https://github.com/shiftynick/ai-telephone)).
+
+**Just want the slides?** Read the PDF:
+[ai-telephone-talk.pdf](https://github.com/shiftynick/ai-telephone/blob/main/docs/talk/ai-telephone-talk.pdf).
 
 ## Run it
-Open `index.html` in any browser (works from `file://`, no server needed).
 
-- `←` `→` `Space` `PgUp/PgDn` — move
-- `Home` / `End` — first / last
-- `F` — fullscreen
-- `O` — overview grid
-- `R` — replay current slide (re-nudge gifs/videos)
-- click advances
+The world loads ES modules, so serve the folder over http:
 
-## Structure
-```
-slides/
-  index.html      the deck (all slide markup)
-  deck.css        styles
-  deck.js         navigation
-  make-qr.mjs     regenerator for the closing-page QR codes
-  assets/
-    qr/*.png      generated QR codes (repo, aiclaritynetwork.com, afterthat.chat…)
-    memes/        drop funny gifs/images here
-    videos/       drop mp4s here
-    (optional compiled hyperframes composition folders)
-```
-Every slide is `<section class="slide" data-title="…" data-tone="…">`.
-`data-tone` picks a background wash: `green | violet | pink | blue`.
-
-## Hyperframes
-HeyGen's web player component (`@hyperframes/player`) can play a local
-composition. Uncomment this in `index.html` `<head>`:
-
-```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/@hyperframes/player"></script>
+```sh
+python3 -m http.server 8931
+# the talk as presented (walk between the stops):  http://localhost:8931/world/index.html
+# just the deck:                                   http://localhost:8931/index.html
 ```
 
-then on a slide:
+- World: arrow keys / WASD to walk (or 1–9, 0 to jump to a stop), Space or Enter opens it, Esc back to the world,
+  O overview, M mutes, F fullscreen.
+- Deck: `Space` / `→` next beat, `←` back one beat, `R` replays the slide, `O` overview, `F` fullscreen.
+- Stop 8 embeds the live game's projector (`http://localhost:8787/present`), so it needs the AI Telephone app
+  running and a host login; everything else is self-contained.
 
-```html
-<hyperframes-player class="frames" src="assets/comp-x/index.html" controls autoplay muted></hyperframes-player>
+**Not included:** three third-party video clips (`assets/videos/My name is Jeff.mp4`, `jev-explained.mp4`,
+`jev-doom-clip.mp4`). Those beats still run; they just have no video. Drop your own files in with those names.
+
+## What's here
+
+```
+index.html        every slide (sections), in talk order
+deck.js           the slide engine (beats, ← steps back a beat, embed mode for the world)
+deck.css          shared look; slides.css per-slide styles
+js/               one script per slide (animations, sound cues), js/sfx.js synthesized sound effects
+assets/           images, QR codes, fonts (all OFL), the recorded telephone runs used by the cold open
+world/            the voxel world (three.js, vendored) and the meetup mascot
+tools/            screenshot/export helpers: shoot.mjs, export-pdf.mjs, refresh-gh.mjs, bundle-run.mjs
+make-qr.mjs       regenerates assets/qr/*.png
 ```
 
-(Compositions are built with the Hyperframes pipeline — `npx hyperframes …` —
-and can also render to `mp4`, which just becomes a normal `<video>`.)
+## Tools
 
-## QR codes
-Edit the `links` array in `make-qr.mjs`, then `node make-qr.mjs`. PNGs land in
-`assets/qr/`. Reference them on the closing slide by file name.
+- `node tools/export-pdf.mjs` — the talk as a PDF, one page per beat (needs the folder served on :8931).
+- `node tools/refresh-gh.mjs` — refreshes the jev-axi slide's GitHub card numbers (needs the `gh` CLI).
+- `node tools/bundle-run.mjs run4` — bundles a recorded run into `js/run-data.js` for the cold open.
+- `node make-qr.mjs` — regenerates the QR codes.
+
+Memes, the "My name is Jev" images, and product screenshots belong to their owners and are shown as they
+were in the talk.

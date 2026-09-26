@@ -5,3 +5,5 @@ world/shots/
 node_modules/
 *.log
 export/
+# third-party clips: kept locally, never published
+assets/videos/
