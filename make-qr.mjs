@@ -13,6 +13,7 @@ const links = [
   // AfterThat ad: TONIGHT's meetup chat. Swap in the real invite link from Nick, then re-run.
   { file: 'afterthat-tonight', url: 'https://afterthat.chat/join/DSAI-072626', label: 'AfterThat · tonight (Dirty South AI chat)', dark: '#183d32' },
   { file: 'repo', url: 'https://github.com/shiftynick/ai-telephone', label: 'ai-telephone' },
+  { file: 'jev-axi', url: 'https://github.com/shiftynick/jev-axi', label: 'jev-axi' },
   // { file: 'omarchy', url: 'https://omarchy.org', label: 'Omarchy' },
   // { file: 't3code', url: 'https://t3.chat', label: 'T3 Code' },
   // { file: 'jev', url: 'https://placeholder.invalid', label: 'Jev' },

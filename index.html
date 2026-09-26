@@ -183,13 +183,67 @@
 </section>
 
 <!-- ================= 5 · Jev + jev-axi (world stop 5) ================= -->
-<section class="slide todo" id="jev" data-title="Jev">
-  <div class="kicker">toolbox · 04</div><h1 class="display">Jev <em>(not Jeff)</em></h1>
-  <p class="plan">"My name is Jeff" → a model that never writes text: typed questions → calibrated probabilities, ~400ms</p><span class="time">1:00</span>
+<section class="slide" id="jev" data-title="Jev">
+  <div class="kicker jv-kicker">toolbox · jev</div>
+  <!-- beat 1: the gag -->
+  <div class="jv-beat jv-b1">
+    <video class="jv-jeff" src="assets/videos/My%20name%20is%20Jeff.mp4" playsinline preload="auto"></video>
+    <img class="jv-slam" src="assets/jev-mynameisjev.jpeg" alt="meme: my name is Jev">
+    <div class="jv-title"><h1 class="display">Jev</h1><p class="mono">by TypeSafe AI</p></div>
+  </div>
+  <!-- beat 2: what the hell is Jev? -->
+  <div class="jv-beat jv-b2">
+    <img class="jv-thumb" src="assets/jev-everywhere.jpeg" alt="Jev this. Jev that. What the hell is Jev?">
+    <img class="jv-fg" src="assets/jev-whatthehellisthis.jpeg" alt="meme: jev, transformer, classifier: what the hell is this?">
+  </div>
+  <!-- beat 3: a model that never writes text -->
+  <div class="jv-beat jv-b3">
+    <h1 class="display jv-h1">A model that <em>never writes text</em></h1>
+    <div class="jv-q mono">“I need help with my invoice.” → which queue?</div>
+    <div class="jv-cmp">
+      <div class="jv-llm">
+        <div class="jv-lbl mono">a typical LLM <span class="jv-llm-t">0.0s</span></div>
+        <p class="jv-llm-text"></p>
+      </div>
+      <div class="jv-jev">
+        <div class="jv-lbl mono">Jev <span class="jv-jev-t"></span></div>
+        <div class="jv-bars"></div>
+      </div>
+      <img class="jv-card" src="assets/jev.jpeg" alt="TypeSafe AI: AI decisions. Typed for your code.">
+    </div>
+    <p class="jv-stats mono">typed questions in · calibrated probabilities out · ~400 ms · a few thousandths of a cent</p>
+  </div>
+  <!-- beat 4: the explainer -->
+  <div class="jv-beat jv-b4"><video class="jv-explainer" src="assets/videos/jev-explained.mp4" playsinline preload="auto"></video></div>
+  <aside class="notes">Beat 1 plays by itself (Jeff clip → My name is Jev → title). Space → "what the hell is Jev?" memes.
+    Space → the comparison (a chatty LLM vs Jev's probabilities; the question/answer is an example).
+    Space → the 64s explainer video (Space during it skips to its end). Space → jev-axi.</aside>
 </section>
-<section class="slide todo" id="jev-axi" data-title="jev-axi">
-  <div class="kicker">i made a thing</div><h1 class="display">jev-axi</h1>
-  <p class="plan">animated terminal: agent tries curl | bash → hazard meters spike → DENIED. repo QR</p><span class="time">1:00</span>
+<section class="slide" id="jev-axi" data-title="jev-axi">
+  <div class="kicker ax-kicker">i made a thing · jev-axi</div>
+  <div class="ax-term">
+    <div class="ax-bar"><i></i><i></i><i></i><span>claude code · PreToolUse hook: jev-axi</span></div>
+    <pre class="ax-out"></pre>
+  </div>
+  <div class="ax-side">
+    <div class="ax-side-title mono">hazards</div>
+    <div class="ax-hz"></div>
+    <div class="ax-stamp"></div>
+    <div class="ax-cost mono"></div>
+  </div>
+  <!-- beat 3: what else + where to get it -->
+  <div class="ax-more">
+    <h1 class="display ax-h1">A second opinion in <em>half a second</em></h1>
+    <div class="ax-chips mono"><span>guard</span><span>triage</span><span>diff</span><span>rank</span><span>filter</span><span>pick</span><span>progress</span><span>hook pre-push</span></div>
+    <p class="ax-honest">Use it for <b>judgments</b>, not as a replacement for reading the code.</p>
+    <div class="ax-get">
+      <img src="assets/qr/jev-axi.png" alt="QR: github.com/shiftynick/jev-axi">
+      <div><code class="mono">npm i -g jev-axi</code><span class="mono">github.com/shiftynick/jev-axi</span></div>
+    </div>
+  </div>
+  <aside class="notes">Beat 1 plays by itself: an agent tries curl | bash → hazards → DENIED; then pnpm test → allowed locally, $0.
+    Space → prompt injection in a fetched issue → guard blocks it (375 ms, $0.00004).
+    Space → what else + install + QR. Space → back to the world. Transcripts are from the jev-axi README (real runs).</aside>
 </section>
 
 <!-- ================= 6 · Omarchy (world stop 6) ================= -->
@@ -248,5 +302,7 @@
 <script src="js/ad-afterthat.js"></script>
 <script src="js/opencode.js"></script>
 <script src="js/t3code.js"></script>
+<script src="js/jev.js"></script>
+<script src="js/jev-axi.js"></script>
 </body>
 </html>
