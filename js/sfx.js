@@ -5,16 +5,28 @@
 (() => {
   let ctx = null, master = null, noise = null, muted = localStorage.getItem('deck.sfx.muted') === '1';
   let hum = null, meter = null;
+  // measured against the world's music (2026-09-26): 0.9 made the teaser sound far quieter on a TV
+  const LEVEL = 1.9;
+
+  // Inside the talk's world (a same-origin iframe) keys often arrive as forwarded messages, not real key presses,
+  // so this frame may never get the user activation audio needs. The world page does have it (it plays music),
+  // so build the context from the world's own AudioContext constructor: it inherits the world's permission.
+  function parentAudioContext() {
+    try {
+      if (window.parent !== window && window.parent.document && window.parent.AudioContext) return window.parent.AudioContext;
+    } catch { /* cross-origin parent: fall back to our own */ }
+    return null;
+  }
 
   function init() {
     if (ctx) return ctx;
-    const AC = window.AudioContext || window.webkitAudioContext;
+    const AC = parentAudioContext() || window.AudioContext || window.webkitAudioContext;
     if (!AC) return null;
     ctx = new AC();
     const comp = ctx.createDynamicsCompressor();
     comp.threshold.value = -16; comp.ratio.value = 4; comp.attack.value = 0.003; comp.release.value = 0.2;
     master = ctx.createGain();
-    master.gain.value = muted ? 0 : 0.9;
+    master.gain.value = muted ? 0 : LEVEL;
     master.connect(comp).connect(ctx.destination);
     meter = ctx.createAnalyser(); meter.fftSize = 2048; comp.connect(meter); // level tap for checks
     noise = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
@@ -25,6 +37,9 @@
   const ready = () => { const c = init(); if (c && c.state !== 'running') c.resume(); return c && c.state === 'running' ? c : null; };
   addEventListener('keydown', () => ready(), true);
   addEventListener('pointerdown', () => ready(), true);
+  addEventListener('message', (e) => { if (e.data?.type === 'deck:key' || e.data?.type === 'deck:start') ready(); });
+  // a context made from the world's constructor outlives this frame: close it when the slides go away
+  addEventListener('pagehide', () => { try { ctx?.close(); } catch { /* already closed */ } });
 
   function tone({ type = 'sine', f0, f1 = f0, at = 0, dur = 0.2, vol = 0.2, attack = 0.005, filter = null }) {
     const c = ready(); if (!c) return;
@@ -69,10 +84,10 @@
       const c = ready(); if (!c || hum) return;
       const o1 = c.createOscillator(), o2 = c.createOscillator(), lfo = c.createOscillator(), lg = c.createGain(), g = c.createGain(), f = c.createBiquadFilter();
       o1.type = 'sawtooth'; o1.frequency.value = 55; o2.type = 'sawtooth'; o2.frequency.value = 55.6;
-      f.type = 'lowpass'; f.frequency.value = 420; f.Q.value = 4;
+      f.type = 'lowpass'; f.frequency.value = 900; f.Q.value = 3;
       lfo.frequency.value = 0.18; lg.gain.value = 180; lfo.connect(lg).connect(f.frequency);
       g.gain.setValueAtTime(0.0001, c.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.04, c.currentTime + 2.5); // a bed under the effects, not a wall
+      g.gain.exponentialRampToValueAtTime(0.05, c.currentTime + 2.5); // a bed under the effects, not a wall
       o1.connect(f); o2.connect(f); f.connect(g).connect(master);
       o1.start(); o2.start(); lfo.start();
       hum = { g, stop: (fade = 1.5) => { const t = c.currentTime; g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(Math.max(0.0001, g.gain.value), t); g.gain.exponentialRampToValueAtTime(0.0001, t + fade); [o1, o2, lfo].forEach((o) => o.stop(t + fade + 0.1)); } };
@@ -109,16 +124,58 @@
       hiss({ dur: 1.4, vol: 0.14, type: 'lowpass', f0: 3000, f1: 200, q: 0.7 });
       [1568, 2093, 2637, 3136].forEach((f, k) => tone({ type: 'sine', f0: f, at: 0.25 + k * 0.07, dur: 1.2, vol: 0.05, attack: 0.02 }));
     },
+    // ---- chat sounds (the AfterThat ad): generic, made from scratch ----
+    /** an incoming message: a soft two-step pop */
+    msgIn(soft = false) { const v = soft ? 0.15 : 0.24; tone({ type: 'sine', f0: 880, dur: 0.07, vol: v }); tone({ type: 'sine', f0: 1320, at: 0.06, dur: 0.12, vol: v * 0.8 }); },
+    /** a message you send: a light upward swoosh */
+    msgOut() { hiss({ dur: 0.18, vol: 0.14, type: 'bandpass', f0: 900, f1: 4000, q: 1.2 }); tone({ type: 'sine', f0: 660, f1: 1100, dur: 0.12, vol: 0.16 }); },
+    /** a quiet tap while someone is typing */
+    tap() { hiss({ dur: 0.02, vol: 0.07 + Math.random() * 0.03, type: 'bandpass', f0: 2500 + Math.random() * 1500, q: 2 }); },
+    /** "Delivered" */
+    delivered() { tone({ type: 'triangle', f0: 1760, dur: 0.05, vol: 0.1 }); },
+    /** time jumps forward: whoosh + a low thud */
+    timeSkip() { hiss({ dur: 0.9, vol: 0.16, type: 'bandpass', f0: 400, f1: 3500, q: 1 }); tone({ type: 'sine', f0: 90, f1: 40, at: 0.55, dur: 0.6, vol: 0.35 }); },
+    /** a ghost town: wind for `sec` seconds, with a few crickets */
+    ghostTown(sec = 5) {
+      hiss({ dur: sec, vol: 0.2, type: 'bandpass', f0: 500, f1: 900, q: 0.7 });
+      for (let k = 0; k < 4; k++) {
+        const at = 0.8 + k * (sec / 4.5);
+        for (let j = 0; j < 3; j++) tone({ type: 'sine', f0: 4200 + (k % 2) * 300, at: at + j * 0.09, dur: 0.05, vol: 0.1 });
+      }
+    },
+    /** a bright, warm reveal chime */
+    chime() { [523, 659, 784, 1047].forEach((f, k) => tone({ type: 'triangle', f0: f, at: k * 0.06, dur: 1.1, vol: 0.12, attack: 0.01 })); tone({ type: 'sine', f0: 2093, at: 0.25, dur: 0.9, vol: 0.05 }); },
     /** tiny glitch chirp while title letters scramble */
     chirp() { tone({ type: 'square', f0: 1200 + Math.random() * 1800, dur: 0.03, vol: 0.03 }); },
     /** RMS of what is playing right now (0 = silent); used to check the effects in a test browser */
     level() { if (!meter) return 0; const b = new Float32Array(meter.fftSize); meter.getFloatTimeDomainData(b); let s = 0; for (const v of b) s += v * v; return Math.sqrt(s / b.length); },
     get muted() { return muted; },
-    setMuted(m) { muted = m; localStorage.setItem('deck.sfx.muted', m ? '1' : '0'); if (master && ctx) master.gain.setTargetAtTime(m ? 0 : 0.9, ctx.currentTime, 0.05); },
+    setMuted(m) { muted = m; localStorage.setItem('deck.sfx.muted', m ? '1' : '0'); if (master && ctx) master.gain.setTargetAtTime(m ? 0 : LEVEL, ctx.currentTime, 0.05); },
     stopAll() { SFX.humOff(0.3); },
   };
+  // Mute must be visible: it persists across reloads, so a forgotten M silences every slide.
+  function badge() {
+    let el = document.getElementById('sfx-muted');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'sfx-muted';
+      el.style.cssText = 'position:fixed;right:14px;top:12px;z-index:99;font:14px system-ui;color:#eee;background:rgba(0,0,0,.6);padding:4px 10px;border-radius:999px;pointer-events:none;transition:opacity .3s';
+      document.body.appendChild(el);
+    }
+    return el;
+  }
+  function showMute(flash) {
+    const el = badge();
+    el.textContent = muted ? '🔇 slide sound off · M' : '🔊 slide sound on · M';
+    el.style.opacity = muted || flash ? '1' : '0';
+    if (flash && !muted) setTimeout(() => (el.style.opacity = '0'), 1500);
+  }
   addEventListener('keydown', (e) => {
-    if (e.key === 'm' || e.key === 'M') { SFX.setMuted(!muted); console.info(`deck sound ${muted ? 'muted' : 'on'}`); }
+    if (e.key === 'm' || e.key === 'M') { SFX.setMuted(!muted); showMute(true); }
   });
+  addEventListener('message', (e) => {
+    if (e.data?.type === 'deck:key' && (e.data.key === 'm' || e.data.key === 'M')) { SFX.setMuted(!muted); showMute(true); }
+  });
+  if (document.readyState === 'loading') addEventListener('DOMContentLoaded', () => muted && showMute(false)); else if (muted) showMute(false);
   window.SFX = SFX;
 })();

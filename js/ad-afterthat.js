@@ -26,12 +26,15 @@
     box.appendChild(m);
     return m;
   }
-  async function say(box, msg, typingMs = 700) {
+  function taps(ms) { for (let at = 60; at < ms - 60; at += 110 + Math.random() * 90) Deck.after(at, () => window.SFX?.tap()); }
+  async function say(box, msg, typingMs = 700, soft = false) {
     const t = typing(box, msg.who, msg.me);
+    if (!msg.me) taps(typingMs);
     await Deck.sleep(typingMs);
     if (!alive) return;
     t.remove();
     bubble(box, msg);
+    if (msg.me) window.SFX?.msgOut(); else window.SFX?.msgIn(soft);
     await Deck.sleep(650);
   }
 
@@ -52,6 +55,7 @@
 
   async function timeSkip(text) {
     skip.textContent = text;
+    window.SFX?.timeSkip();
     skip.classList.add('on');
     await Deck.sleep(1400);
     skip.classList.remove('on');
@@ -66,12 +70,15 @@
     await timeSkip('3 weeks later…');
     if (!alive || revealed) return;
     bubble(ghost, { me: true, who: 'me', name: 'you', time: 'Wed 11:52 PM', text: 'hey, is anyone still up for that coffee?' });
+    window.SFX?.msgOut();
+    Deck.after(700, () => window.SFX?.delivered());
     const st = document.createElement('div');
     st.className = 'aft-state';
     st.textContent = 'Delivered';
     ghost.appendChild(st);
     await Deck.sleep(1100);
-    const t = typing(ghost, 'D'); // someone starts typing… and stops
+    const t = typing(ghost, 'D'); // someone starts typing… and stops (the taps just stop too)
+    taps(1500);
     await Deck.sleep(1600);
     t.remove();
     await Deck.sleep(700);
@@ -79,6 +86,7 @@
     await timeSkip('6 months later…');
     if (!alive || revealed) return;
     el.classList.add('aged');
+    window.SFX?.ghostTown(5.5);
     await Deck.sleep(6500);
     if (alive && !revealed) reveal();
   }
@@ -87,9 +95,10 @@
     if (revealed) return;
     revealed = true;
     el.classList.add('revealed');
+    window.SFX?.chime();
     after.innerHTML = '';
     await Deck.sleep(700);
-    for (const m of AFTER) { if (!alive) return; await say(after, m, 450); }
+    for (const m of AFTER) { if (!alive) return; await say(after, m, 450, true); }
   }
 
   Deck.on('ad-afterthat', {
