@@ -864,6 +864,7 @@ function phonead() {
   line(v, [-1, 1, -8], [-1, 20, -2], 0x2a2930); line(v, [0, 1, -8], [0, 20, -2], 0x2a2930); // kickstand
   group.add(solid(v));
   const W = 360, H = 640;
+  const mark = new Image(); mark.src = '../assets/afterthat/afterthat-wordmark.svg';
   const bubble = (g, text, right, y, a = 1, faded = false) => {
     g.globalAlpha = a;
     g.font = FONT(26, 600);
@@ -901,14 +902,15 @@ function phonead() {
       g.fillStyle = '#ecE8f2'; g.beginPath(); g.roundRect(24, 530, 90, 46, 22); g.fill();
       for (let i = 0; i < 3; i++) { g.fillStyle = `rgba(90,84,104,${0.4 + 0.6 * Math.abs(Math.sin(T * 5 + i))})`; g.beginPath(); g.arc(50 + i * 20, 553, 6, 0, TAU); g.fill(); }
     }
-    if (T > 11.6) { // the ad card
+    if (T > 11.6) { // the ad card, in afterthat's own palette
       const a = Math.min(1, (T - 11.6) * 2);
       g.globalAlpha = a;
-      const gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, '#ff7a59'); gr.addColorStop(1, '#6d2a8a');
-      g.fillStyle = gr; g.fillRect(0, 0, w, h);
-      g.fillStyle = '#fff'; g.textAlign = 'center';
-      g.font = SERIF(44, true); g.fillText('and then they', w / 2, 250); g.fillText('never talked again.', w / 2, 300);
-      g.font = FONT(40, 800); g.fillText('afterthat.chat', w / 2, 420);
+      g.fillStyle = '#f7f8f4'; g.fillRect(0, 0, w, h);
+      g.fillStyle = '#183d32'; g.textAlign = 'center';
+      g.font = SERIF(40, true); g.fillText('and then they', w / 2, 200); g.fillText('never talked again.', w / 2, 246);
+      g.fillStyle = '#b49a52'; g.fillRect(w / 2 - 30, 280, 60, 4);
+      if (mark.complete && mark.naturalWidth) g.drawImage(mark, w / 2 - 150, 330, 300, 300 * mark.naturalHeight / mark.naturalWidth);
+      g.fillStyle = '#7c9188'; g.font = MONO(22, 600); g.fillText('afterthat.chat', w / 2, 440);
       g.textAlign = 'left'; g.globalAlpha = 1;
     }
   });
